@@ -1,0 +1,3 @@
+# CLI
+
+::: usel.cli.main
