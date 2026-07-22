@@ -1,0 +1,101 @@
+name: USEL CI
+
+on:
+  push:
+    branches:
+      - "**"
+
+  pull_request:
+    branches:
+      - "**"
+
+
+jobs:
+
+  test:
+
+    name: Python ${{ matrix.python-version }}
+
+    runs-on: ubuntu-latest
+
+
+    strategy:
+      matrix:
+        python-version:
+          - "3.10"
+          - "3.11"
+          - "3.12"
+
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+
+
+      - name: Install dependencies
+        run: |
+          uv sync --group dev
+
+
+
+      # Check Python syntax compilation
+      - name: Compile Python files
+        run: |
+          uv run python -m compileall src
+
+
+
+      # Check package imports
+      - name: Check USEL imports
+        run: |
+          uv run python - <<EOF
+          import usel
+          import usel.math
+          import usel.linalg
+          import usel.solvers
+          import usel.schrodinger
+          import usel.dirac
+          print("USEL import check passed")
+          EOF
+
+
+
+      # Run test suite
+      - name: Run Tests
+        run: |
+          uv run pytest
+
+
+
+      # Formatting
+      - name: Black Check
+        run: |
+          uv run black --check .
+
+
+
+      # Linting
+      - name: Ruff Check
+        run: |
+          uv run ruff check .
+
+
+
+      # Type checking
+      - name: MyPy Check
+        run: |
+          uv run mypy src
