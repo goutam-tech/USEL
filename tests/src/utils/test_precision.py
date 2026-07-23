@@ -1,9 +1,9 @@
 import pytest
 
 from usel.utils.precision import (
-    set_global_precision,
     get_global_precision,
     round_to_precision,
+    set_global_precision,
 )
 
 

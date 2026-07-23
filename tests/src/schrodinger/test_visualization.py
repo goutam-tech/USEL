@@ -4,9 +4,9 @@ import matplotlib
 
 matplotlib.use("Agg", force=True)
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pytest
-import matplotlib.pyplot as plt
 
 from usel.schrodinger.visualization import (
     animate_evolution,

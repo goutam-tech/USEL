@@ -1,6 +1,7 @@
 import numpy as np
+
+from usel.linalg.decompositions import cholesky, eigenvalues, eigenvectors, lu, qr, svd
 from usel.math.matrix import Matrix
-from usel.linalg.decompositions import eigenvalues, eigenvectors, svd, qr, lu, cholesky
 
 
 def test_eigenvalues():
@@ -43,10 +44,10 @@ def test_qr():
 def test_lu():
     matrix = Matrix([[4, 3], [6, 3]])
 
-    p, l, u = lu(matrix)
+    p, L, u = lu(matrix)
 
     assert p.shape == (2, 2)
-    assert l.shape == (2, 2)
+    assert L.shape == (2, 2)
     assert u.shape == (2, 2)
 
 

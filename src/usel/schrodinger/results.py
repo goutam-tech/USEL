@@ -1,8 +1,11 @@
 """Result containers for the Schrödinger equation solvers."""
 
 from __future__ import annotations
+
 from dataclasses import dataclass, field
+
 import numpy as np
+
 
 @dataclass(frozen=True)
 class TimeIndependentResult:
@@ -21,6 +24,7 @@ class TimeIndependentResult:
     energies: np.ndarray
     eigenstates: np.ndarray
     x: np.ndarray
+
 
 @dataclass(frozen=True)
 class TimeDependentResult:

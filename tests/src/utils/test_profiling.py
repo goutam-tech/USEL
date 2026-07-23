@@ -1,4 +1,4 @@
-from usel.utils.profiling import profile, memory_usage_mb
+from usel.utils.profiling import memory_usage_mb, profile
 
 
 def test_profile_returns_result():

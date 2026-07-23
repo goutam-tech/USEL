@@ -4,7 +4,6 @@ from usel.math import Matrix
 
 
 class TestMatrixMultiplication:
-
     def test_random_matrix_creation(self):
         """Test random matrix generation."""
 

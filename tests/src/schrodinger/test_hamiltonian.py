@@ -10,7 +10,7 @@ from usel.schrodinger.operators import (
     kinetic_energy_operator,
     potential_operator,
 )
-from usel.schrodinger.potentials import harmonic_oscillator, infinite_square_well
+from usel.schrodinger.potentials import harmonic_oscillator
 
 
 def test_hamiltonian_matrix_is_sum_of_kinetic_and_potential():

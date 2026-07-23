@@ -8,17 +8,16 @@ Supports:
 """
 
 from __future__ import annotations
+
 import numpy as np
+
 
 class BoundaryCondition:
     """
     Base boundary condition.
     """
 
-    def apply(
-        self,
-        psi: np.ndarray
-    ):
+    def apply(self, psi: np.ndarray):
         raise NotImplementedError
 
 
@@ -32,10 +31,8 @@ class DirichletBoundary(BoundaryCondition):
     ψ(0)=0
     ψ(L)=0
     """
-    def apply(
-        self,
-        psi
-    ):
+
+    def apply(self, psi):
 
         psi = psi.copy()
 
@@ -52,10 +49,7 @@ class NeumannBoundary(BoundaryCondition):
     dψ/dx = 0
     """
 
-    def apply(
-        self,
-        psi
-    ):
+    def apply(self, psi):
 
         psi = psi.copy()
 
@@ -64,6 +58,7 @@ class NeumannBoundary(BoundaryCondition):
 
         return psi
 
+
 class PeriodicBoundary(BoundaryCondition):
     """
     Periodic boundary.
@@ -71,10 +66,7 @@ class PeriodicBoundary(BoundaryCondition):
     ψ(0)=ψ(L)
     """
 
-    def apply(
-        self,
-        psi
-    ):
+    def apply(self, psi):
 
         psi = psi.copy()
 

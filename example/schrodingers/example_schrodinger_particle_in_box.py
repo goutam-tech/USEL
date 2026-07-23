@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from usel.schrodinger import SchrodingerSolver, particle_in_box_state
+from usel.schrodinger import SchrodingerSolver
 
 
 def main() -> None:
@@ -20,8 +20,10 @@ def main() -> None:
         analytical = (i + 1) ** 2 * np.pi**2 / 2.0
         print(f"  {i + 1}   {result.energies[i]:10.6f}   {analytical:10.6f}")
 
-    print(f"\nGround-state normalisation check: "
-          f"{np.sum(np.abs(result.eigenstates[:, 0]) ** 2) * (x[1] - x[0]):.6f}")
+    print(
+        f"\nGround-state normalisation check: "
+        f"{np.sum(np.abs(result.eigenstates[:, 0]) ** 2) * (x[1] - x[0]):.6f}"
+    )
 
 
 if __name__ == "__main__":

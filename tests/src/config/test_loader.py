@@ -1,7 +1,6 @@
 import pytest
 
 from usel.config.loader import load_config, save_config
-
 from usel.exceptions import ConfigError
 
 

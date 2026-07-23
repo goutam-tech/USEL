@@ -1,10 +1,10 @@
 import logging
 
 from usel.logging.logger import (
+    PerformanceLogger,
     get_console_logger,
     get_file_logger,
     set_debug_mode,
-    PerformanceLogger,
 )
 
 

@@ -109,7 +109,9 @@ def test_rk4_is_dramatically_more_accurate_than_euler():
     ids=["euler-order1", "improved_euler-order2", "rk2-order2", "rk4-order4"],
 )
 def test_empirical_convergence_order(method, min_ratio):
-    f = lambda t, y: y
+    def f(t, y):
+        return y
+
     analytic_end = math.e
 
     def global_error(h):

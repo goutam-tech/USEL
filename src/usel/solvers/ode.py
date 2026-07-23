@@ -9,7 +9,7 @@ over a fixed step size ``h`` from ``t0`` to ``t_end``.
 
 from __future__ import annotations
 
-from typing import Callable
+from collections.abc import Callable
 
 import numpy as np
 
@@ -27,7 +27,9 @@ def _validate_step(t0: float, t_end: float, h: float) -> int:
     return n_steps
 
 
-def euler(f: ODEFunc, t0: float, y0: float, t_end: float, h: float) -> tuple[np.ndarray, np.ndarray]:
+def euler(
+    f: ODEFunc, t0: float, y0: float, t_end: float, h: float
+) -> tuple[np.ndarray, np.ndarray]:
     """Explicit (forward) Euler method. Returns (t_values, y_values)."""
     n_steps = _validate_step(t0, t_end, h)
     t = np.linspace(t0, t0 + n_steps * h, n_steps + 1)

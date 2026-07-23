@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Callable
+from collections.abc import Callable
 
 import numpy as np
 
@@ -60,5 +60,5 @@ def gaussian_quadrature(f: Func, a: float, b: float, n: int = 5) -> float:
     # Map nodes/weights from [-1, 1] to [a, b]
     mapped_nodes = 0.5 * (b - a) * nodes + 0.5 * (b + a)
     mapped_weights = 0.5 * (b - a) * weights
-    total = sum(w * f(x) for w, x in zip(mapped_weights, mapped_nodes))
+    total = sum(w * f(x) for w, x in zip(mapped_weights, mapped_nodes, strict=True))
     return float(total)

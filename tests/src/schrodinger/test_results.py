@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from dataclasses import FrozenInstanceError
+
 import numpy as np
 import pytest
 
@@ -20,7 +22,7 @@ def test_time_independent_result_is_frozen():
     result = TimeIndependentResult(
         energies=np.array([1.0]), eigenstates=np.eye(1), x=np.array([0.0])
     )
-    with pytest.raises(Exception):
+    with pytest.raises(FrozenInstanceError):
         result.energies = np.array([2.0])
 
 

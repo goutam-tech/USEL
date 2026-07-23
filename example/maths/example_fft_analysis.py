@@ -6,6 +6,7 @@ import numpy as np
 
 from usel.math import frequency_analysis
 
+
 def main() -> None:
     sample_rate = 500.0
     t = np.arange(0, 1, 1 / sample_rate)

@@ -1,9 +1,8 @@
-import pytest
 import numpy as np
-
-from usel.math.transforms import fft, ifft, frequency_analysis
+import pytest
 
 from usel.exceptions import ValidationError
+from usel.math.transforms import fft, frequency_analysis, ifft
 
 
 class TestTransforms:

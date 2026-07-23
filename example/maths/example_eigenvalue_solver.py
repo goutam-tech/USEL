@@ -5,6 +5,7 @@ from __future__ import annotations
 from usel.linalg import eigenvalues, eigenvectors
 from usel.math import Matrix
 
+
 def main() -> None:
     m = Matrix([[4, 1], [2, 3]])
     print("Matrix:")

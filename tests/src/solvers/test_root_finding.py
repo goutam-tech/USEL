@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import math
+from dataclasses import FrozenInstanceError
 
 import pytest
 
@@ -20,7 +21,7 @@ SQRT2 = math.sqrt(2.0)
 def test_solver_result_is_frozen_dataclass():
     result = SolverResult(root=1.0, iterations=1, converged=True, history=[1.0])
     assert result.root == 1.0
-    with pytest.raises(Exception):
+    with pytest.raises(FrozenInstanceError):
         result.root = 2.0
 
 
@@ -89,9 +90,7 @@ def test_gradient_descent_minimizes_simple_quadratic():
 
 
 def test_gradient_descent_respects_max_iter_when_slow():
-    result = gradient_descent(
-        df=lambda x: 2 * (x - 3), x0=0.0, learning_rate=1e-6, max_iter=5
-    )
+    result = gradient_descent(df=lambda x: 2 * (x - 3), x0=0.0, learning_rate=1e-6, max_iter=5)
     assert not result.converged
     assert result.iterations == 5
 

@@ -1,9 +1,8 @@
 import numpy as np
 import pytest
 
-from usel.io.readers import read_csv, read_json, read_npy, read_text
-
 from usel.exceptions import IOError_
+from usel.io.readers import read_csv, read_json, read_npy, read_text
 
 
 def test_read_csv(tmp_path):

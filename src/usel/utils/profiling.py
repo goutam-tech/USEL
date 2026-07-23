@@ -6,7 +6,8 @@ import cProfile
 import io
 import os
 import pstats
-from typing import Any, Callable, TypeVar
+from collections.abc import Callable
+from typing import Any, TypeVar
 
 F = TypeVar("F", bound=Callable[..., Any])
 
@@ -35,7 +36,7 @@ def memory_usage_mb() -> float:
     returns ``0.0`` if neither is available (e.g. unsupported platform).
     """
     try:
-        import psutil  # type: ignore[import-not-found]
+        import psutil
 
         process = psutil.Process(os.getpid())
         return process.memory_info().rss / (1024 * 1024)

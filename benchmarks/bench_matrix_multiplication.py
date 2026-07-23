@@ -8,6 +8,7 @@ from usel.math import Matrix
 
 SIZES = (50, 100, 200, 400)
 
+
 def main() -> None:
     print(f"{'Size':>8} | {'Time (s)':>10}")
     print("-" * 23)

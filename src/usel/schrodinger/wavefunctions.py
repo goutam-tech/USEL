@@ -1,12 +1,13 @@
 """Analytical and initial wavefunctions for the Schrödinger equation."""
 
 from __future__ import annotations
+
 import math
+
 import numpy as np
 
-def particle_in_box_state(
-    x: np.ndarray, n: int, x_min: float, x_max: float
-) -> np.ndarray:
+
+def particle_in_box_state(x: np.ndarray, n: int, x_min: float, x_max: float) -> np.ndarray:
     """Normalised eigenstate of the infinite square well.
 
     Parameters
@@ -20,6 +21,7 @@ def particle_in_box_state(
     mask = (x >= x_min) & (x <= x_max)
     psi[mask] = math.sqrt(2.0 / L) * np.sin(n * math.pi * (x[mask] - x_min) / L)
     return psi
+
 
 def harmonic_oscillator_state(
     x: np.ndarray, n: int, omega: float = 1.0, mass: float = 1.0
@@ -52,6 +54,7 @@ def harmonic_oscillator_state(
     psi = norm_factor * np.exp(-0.5 * xi**2) * psi / hermite_norm
     return psi
 
+
 def gaussian_wavepacket(
     x: np.ndarray,
     x0: float = 0.0,
@@ -74,6 +77,7 @@ def gaussian_wavepacket(
     dx = x[1] - x[0] if len(x) > 1 else 1.0
     norm = np.sqrt(np.sum(np.abs(psi) ** 2) * dx)
     return psi / norm
+
 
 def double_gaussian(
     x: np.ndarray,

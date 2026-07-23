@@ -1,8 +1,8 @@
-import pytest
 import numpy as np
+import pytest
 
-from usel.math.matrix import Matrix
 from usel.exceptions import MatrixError
+from usel.math.matrix import Matrix
 
 
 class TestMatrix:

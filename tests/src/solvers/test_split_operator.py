@@ -7,7 +7,6 @@ from usel.solvers.split_operator import evolve
 
 
 class Grid:
-
     def __init__(self, x: np.ndarray):
         self.x = x
         self.dx = x[1] - x[0]

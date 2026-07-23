@@ -6,8 +6,10 @@ import time
 
 from usel.solvers import euler, improved_euler, rk2, rk4
 
+
 def decay(t: float, y: float) -> float:
     return -y
+
 
 def main() -> None:
     methods = {"euler": euler, "improved_euler": improved_euler, "rk2": rk2, "rk4": rk4}

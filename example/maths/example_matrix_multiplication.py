@@ -5,7 +5,9 @@ determinant, and inverse operations using ``usel.math.Matrix``.
 """
 
 from __future__ import annotations
+
 from usel.math import Matrix
+
 
 def main() -> None:
     a = Matrix.random(4, 4, seed=1)

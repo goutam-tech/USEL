@@ -4,8 +4,9 @@ from __future__ import annotations
 
 import functools
 import time
+from collections.abc import Callable
 from types import TracebackType
-from typing import Any, Callable, TypeVar
+from typing import Any, TypeVar
 
 F = TypeVar("F", bound=Callable[..., Any])
 
@@ -26,7 +27,7 @@ class Timer:
         self.start_time: float | None = None
         self.elapsed: float = 0.0
 
-    def __enter__(self) -> "Timer":
+    def __enter__(self) -> Timer:
         self.start_time = time.perf_counter()
         return self
 

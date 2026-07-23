@@ -18,7 +18,7 @@ import platform
 import subprocess
 import sys
 import time
-from typing import Sequence
+from collections.abc import Sequence
 
 import usel
 from usel.math.matrix import Matrix

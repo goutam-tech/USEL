@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import numpy as np
-import pytest
 from scipy.sparse import csr_matrix
 
 from usel.schrodinger.grids import SpatialGrid

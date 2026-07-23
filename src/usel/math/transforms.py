@@ -23,9 +23,7 @@ def ifft(spectrum: np.ndarray) -> np.ndarray:
     return np.fft.ifft(array)
 
 
-def frequency_analysis(
-    signal: np.ndarray, sample_rate: float
-) -> tuple[np.ndarray, np.ndarray]:
+def frequency_analysis(signal: np.ndarray, sample_rate: float) -> tuple[np.ndarray, np.ndarray]:
     """Return (frequencies, magnitudes) for the positive-frequency spectrum.
 
     Parameters

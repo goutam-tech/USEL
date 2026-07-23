@@ -5,17 +5,24 @@ bound states and the Crank–Nicolson propagator for time evolution.
 """
 
 from __future__ import annotations
-from typing import Callable
+
+from collections.abc import Callable
+
 import numpy as np
-from scipy.sparse import diags
+from scipy.sparse import csr_matrix, diags
 from scipy.sparse.linalg import eigsh
+
 from usel.exceptions import SolverError, ValidationError
-from usel.schrodinger.results import TimeDependentResult, TimeIndependentResult
+from usel.schrodinger.results import (
+    TimeDependentResult,
+    TimeIndependentResult,
+)
 
 PotentialFunc = Callable[[np.ndarray], np.ndarray]
 
 HBAR = 1.0
 MASS = 1.0
+
 
 def _build_hamiltonian(
     x: np.ndarray,
@@ -38,12 +45,13 @@ def _build_hamiltonian(
     H = np.diag(diag_main) + np.diag(diag_off, 1) + np.diag(diag_off, -1)
     return H
 
+
 def _build_hamiltonian_sparse(
     x: np.ndarray,
     potential: np.ndarray,
     hbar: float = HBAR,
     mass: float = MASS,
-) -> "scipy.sparse.csr_matrix":
+) -> csr_matrix:
     """Construct a sparse finite-difference Hamiltonian matrix."""
     n = len(x)
     dx = x[1] - x[0]
@@ -54,6 +62,7 @@ def _build_hamiltonian_sparse(
 
     H = diags([off_diag, main_diag, off_diag], [-1, 0, 1], shape=(n, n), format="csr")
     return H
+
 
 class SchrodingerSolver:
     """Unified solver for Schrödinger equation problems.
@@ -122,9 +131,7 @@ class SchrodingerSolver:
         """The full Hamiltonian matrix."""
         return _build_hamiltonian(self._x, self._potential, self._hbar, self._mass)
 
-    def eigenstates(
-        self, n_states: int = 6, which: str = "SA"
-    ) -> TimeIndependentResult:
+    def eigenstates(self, n_states: int = 6, which: str = "SA") -> TimeIndependentResult:
         """Compute the lowest ``n_states`` energy eigenstates.
 
         Parameters
@@ -143,9 +150,7 @@ class SchrodingerSolver:
         if n_states >= n_grid:
             raise SolverError("n_states must be smaller than the grid size")
 
-        H_sparse = _build_hamiltonian_sparse(
-            self._x, self._potential, self._hbar, self._mass
-        )
+        H_sparse = _build_hamiltonian_sparse(self._x, self._potential, self._hbar, self._mass)
 
         try:
             values, vectors = eigsh(H_sparse, k=n_states, which=which)
@@ -163,9 +168,7 @@ class SchrodingerSolver:
             if norm > 0:
                 eigenstates[:, i] /= norm
 
-        return TimeIndependentResult(
-            energies=energies, eigenstates=eigenstates, x=self._x
-        )
+        return TimeIndependentResult(energies=energies, eigenstates=eigenstates, x=self._x)
 
     def solve_time_dependent(
         self,
@@ -214,7 +217,6 @@ class SchrodingerSolver:
         A_lu = lu_factor(A)
 
         psi = psi0.astype(np.complex128).copy()
-        dx = self._x[1] - self._x[0]
 
         psi_history = np.empty((n_steps + 1, n_grid), dtype=np.complex128)
         prob_history = np.empty((n_steps + 1, n_grid), dtype=np.float64)
@@ -268,14 +270,11 @@ class SchrodingerSolver:
         n_steps = int(round(t_end / dt))
         dx = self._x[1] - self._x[0]
 
-        # Momentum grid for kinetic energy
-        dk = 2.0 * np.pi / (n_grid * dx)
         k = np.fft.fftfreq(n_grid, d=dx / (2.0 * np.pi))
 
         # Kinetic energy in momentum space
         kinetic_k = self._hbar**2 * k**2 / (2.0 * self._mass)
 
-        # Half-step phase factors
         phase_half = np.exp(-1j * dt / 2.0 * kinetic_k / self._hbar)
         phase_pot = np.exp(-1j * dt / self._hbar * self._potential)
 
@@ -318,13 +317,9 @@ class SchrodingerSolver:
         dx = self._x[1] - self._x[0]
         return float(np.real(np.conj(psi) @ operator @ psi * dx))
 
-    def probability_current(
-        self, psi: np.ndarray
-    ) -> np.ndarray:
+    def probability_current(self, psi: np.ndarray) -> np.ndarray:
         """Compute the probability current j = (ℏ/2mi)(ψ* ∇ψ − ψ ∇ψ*)."""
         dx = self._x[1] - self._x[0]
         dpsi = np.gradient(psi, dx)
-        current = (self._hbar / (2.0j * self._mass)) * (
-            np.conj(psi) * dpsi - psi * np.conj(dpsi)
-        )
+        current = (self._hbar / (2.0j * self._mass)) * (np.conj(psi) * dpsi - psi * np.conj(dpsi))
         return np.real(current)

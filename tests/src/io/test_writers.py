@@ -1,8 +1,7 @@
 import numpy as np
 
-from usel.io.writers import write_csv, write_json, write_npy, write_text
-
 from usel.io.readers import read_csv, read_json, read_npy, read_text
+from usel.io.writers import write_csv, write_json, write_npy, write_text
 
 
 def test_write_csv(tmp_path):

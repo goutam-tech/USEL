@@ -28,6 +28,4 @@ def validate_shape(shape: tuple[int, ...], expected: tuple[int, ...], name: str 
 def validate_type(value: Any, expected_type: type | tuple[type, ...], name: str = "value") -> None:
     """Raise ``ValidationError`` if ``value`` is not an instance of ``expected_type``."""
     if not isinstance(value, expected_type):
-        raise ValidationError(
-            f"{name} must be of type {expected_type}, got {type(value).__name__}"
-        )
+        raise ValidationError(f"{name} must be of type {expected_type}, got {type(value).__name__}")

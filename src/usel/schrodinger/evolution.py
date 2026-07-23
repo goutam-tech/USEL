@@ -8,22 +8,14 @@ Supports:
 """
 
 from __future__ import annotations
-import numpy as np
-from .propagators import (
-    exact,
-    apply
-)
-from .normalization import normalize
 
-def evolve(
-    psi,
-    hamiltonian,
-    dt,
-    steps,
-    dx,
-    boundary=None,
-    hbar=1.0
-):
+import numpy as np
+
+from .normalization import normalize
+from .propagators import apply, exact
+
+
+def evolve(psi, hamiltonian, dt, steps, dx, boundary=None, hbar=1.0):
     """
     Time evolution:
 
@@ -50,39 +42,20 @@ def evolve(
         Boundary condition object
     """
 
+    U = exact(hamiltonian, dt, hbar)
 
-    U = exact(
-        hamiltonian,
-        dt,
-        hbar
-    )
-
-
-    states=[]
-
+    states = []
 
     current = psi.copy()
 
     for _ in range(steps):
-
-        current = apply(
-            U,
-            current
-        )
+        current = apply(U, current)
 
         if boundary:
+            current = boundary.apply(current)
 
-            current = boundary.apply(
-                current
-            )
+        current = normalize(current, dx)
 
-        current = normalize(
-            current,
-            dx
-        )
-
-        states.append(
-            current.copy()
-        )
+        states.append(current.copy())
 
     return np.array(states)
