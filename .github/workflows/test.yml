@@ -4,71 +4,61 @@ on:
   push:
     branches:
       - "**"
-
   pull_request:
     branches:
       - "**"
 
+permissions:
+  contents: read
+
 jobs:
-
   test:
+    name: Python ${{ matrix.python-version }} • ${{ matrix.os }}
 
-    name: Test Python ${{ matrix.python-version }}
-
-    runs-on: ubuntu-latest
-
+    runs-on: ${{ matrix.os }}
 
     strategy:
+      fail-fast: false
       matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+          - macos-latest
+
         python-version:
           - "3.10"
           - "3.11"
           - "3.12"
 
-
-
     steps:
-
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
-
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
-
-
       - name: Install uv
         uses: astral-sh/setup-uv@v5
 
-
-
       - name: Install dependencies
-        run: |
-          uv sync --group dev
+        run: uv sync --group dev
 
+      - name: Check formatting (Black)
+        run: uv run black --check .
 
-
-      - name: Run tests
-        run: |
-          uv run pytest
-
-
-
-      - name: Check formatting
-        run: |
-          uv run black --check .
-
-
+      - name: Check formatting (Ruff)
+        run: uv run ruff format --check .
 
       - name: Run Ruff
-        run: |
-          uv run ruff check .
+        run: uv run ruff check .
 
+      - name: Compile Python files
+        run: python -m compileall src tests example
 
+      - name: Run tests
+        run: uv run pytest -v
 
-      - name: Run MyPy
-        run: |
-          uv run mypy src
+      - name: Build package
+        run: uv build
