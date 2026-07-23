@@ -56,7 +56,7 @@ jobs:
 
       - name: Compile Python files
         run: python -m compileall src tests example
-
+ 
       - name: Run tests
         run: uv run pytest -v
 
