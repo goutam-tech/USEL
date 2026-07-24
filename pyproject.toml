@@ -6,38 +6,54 @@ build-backend = "setuptools.build_meta"
 name = "usel"
 version = "1.0.1"
 description = "An open-source, CPU-only scientific computing framework focused on quantum physics simulations and numerical methods."
+
 authors = [
     { name = "Goutam Parashuram Gotur", email = "goutamgotur2006@outlook.com" },
     { name = "K R Raaghavindhra", email = "raaghavindhra@gmail.com" }
 ]
+
 license = { text = "MIT" }
 readme = "README.md"
-keywords = ["scientific-computing", "numerical-methods", "physics", "linear-algebra", "computional-physics", "dirac-equation", "mathematics", "open-source","quantum-mechanics"]
+
+keywords = [
+    "scientific-computing",
+    "numerical-methods",
+    "physics",
+    "linear-algebra",
+    "computational-physics",
+    "dirac-equation",
+    "mathematics",
+    "open-source",
+    "quantum-mechanics"
+]
+
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Topic :: Scientific/Engineering :: Physics",
     "Topic :: Scientific/Engineering :: Mathematics",
-    "Topic :: Scientific/Engineering :: Chemistry",
+    "Topic :: Scientific/Engineering :: Chemistry"
 ]
 
 requires-python = ">=3.11"
+
 dependencies = [
     "numpy>=1.26",
     "scipy>=1.11",
     "sympy>=1.12",
     "pyyaml>=6.0",
     "toml>=0.10.2",
-    "matplotlib>=3.11.1",
+    "matplotlib>=3.8"
 ]
 
 [project.urls]
-Homepage = "https://github.com/usel/usel"
-Repository = "https://github.com/usel/usel"
-Documentation = "https://usel.github.io/usel"
+Homepage = "https://github.com/goutam-tech/usel"
+Repository = "https://github.com/goutam-tech/usel"
+Documentation = "https://goutam-tech.github.io/usel"
 
 [project.scripts]
 usel = "usel.cli.main:main"
@@ -48,7 +64,7 @@ dev = [
     "black>=24.3.0",
     "mypy>=1.9.0",
     "pytest>=8.1.0",
-    "pytest-cov>=5.0.0",
+    "pytest-cov>=5.0.0"
 ]
 
 [tool.setuptools]
