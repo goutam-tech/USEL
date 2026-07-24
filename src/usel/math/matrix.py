@@ -8,7 +8,7 @@ NumPy and SciPy.
 
 from __future__ import annotations
 
-from typing import Iterable, Sequence
+from collections.abc import Iterable, Sequence
 
 import numpy as np
 
@@ -29,38 +29,37 @@ class Matrix:
 
     __slots__ = ("_data",)
 
-    def __init__(self, data: Iterable[Iterable[float]] | np.ndarray, dtype: type = np.float64) -> None:
+    def __init__(
+        self, data: Iterable[Iterable[float]] | np.ndarray, dtype: type = np.float64
+    ) -> None:
         array = np.array(data, dtype=dtype)
         if array.ndim != 2:
             raise MatrixError(f"Matrix data must be 2-dimensional, got {array.ndim}D input")
         self._data = array
 
-    # ------------------------------------------------------------------
-    # Construction helpers
-    # ------------------------------------------------------------------
     @classmethod
-    def zeros(cls, rows: int, cols: int) -> "Matrix":
+    def zeros(cls, rows: int, cols: int) -> Matrix:
         """Create a ``rows x cols`` matrix of zeros."""
         return cls(np.zeros((rows, cols)))
 
     @classmethod
-    def ones(cls, rows: int, cols: int) -> "Matrix":
+    def ones(cls, rows: int, cols: int) -> Matrix:
         """Create a ``rows x cols`` matrix of ones."""
         return cls(np.ones((rows, cols)))
 
     @classmethod
-    def identity(cls, n: int) -> "Matrix":
+    def identity(cls, n: int) -> Matrix:
         """Create an ``n x n`` identity matrix."""
         return cls(np.eye(n))
 
     @classmethod
-    def random(cls, rows: int, cols: int, seed: int | None = None) -> "Matrix":
+    def random(cls, rows: int, cols: int, seed: int | None = None) -> Matrix:
         """Create a ``rows x cols`` matrix of uniform random values in [0, 1)."""
         rng = np.random.default_rng(seed)
         return cls(rng.random((rows, cols)))
 
     @classmethod
-    def from_sequence(cls, rows: Sequence[Sequence[float]]) -> "Matrix":
+    def from_sequence(cls, rows: Sequence[Sequence[float]]) -> Matrix:
         """Create a matrix from a sequence of row sequences."""
         return cls(rows)
 
@@ -92,15 +91,15 @@ class Matrix:
     # ------------------------------------------------------------------
     # Core operations
     # ------------------------------------------------------------------
-    def transpose(self) -> "Matrix":
+    def transpose(self) -> Matrix:
         """Return the transpose of this matrix."""
         return Matrix(self._data.T)
 
     @property
-    def T(self) -> "Matrix":  # noqa: N802 - conventional alias
+    def T(self) -> Matrix:  # noqa: N802 - conventional alias
         return self.transpose()
 
-    def multiply(self, other: "Matrix") -> "Matrix":
+    def multiply(self, other: Matrix) -> Matrix:
         """Matrix multiplication with another :class:`Matrix`."""
         if self.cols != other.rows:
             raise MatrixError(
@@ -108,7 +107,7 @@ class Matrix:
             )
         return Matrix(self._data @ other.data)
 
-    def inverse(self) -> "Matrix":
+    def inverse(self) -> Matrix:
         """Return the matrix inverse.
 
         Raises
@@ -137,24 +136,24 @@ class Matrix:
         """Return a matrix norm. Defaults to the Frobenius norm."""
         return float(np.linalg.norm(self._data, ord=ord))
 
-    def decompose_lu(self) -> tuple["Matrix", "Matrix", "Matrix"]:
+    def decompose_lu(self) -> tuple[Matrix, Matrix, Matrix]:
         """LU decomposition. Returns (P, L, U) such that P @ A = L @ U."""
         from scipy.linalg import lu
 
-        p, l, u = lu(self._data)
-        return Matrix(p), Matrix(l), Matrix(u)
+        p, w, u = lu(self._data)
+        return Matrix(p), Matrix(w), Matrix(u)
 
-    def decompose_qr(self) -> tuple["Matrix", "Matrix"]:
+    def decompose_qr(self) -> tuple[Matrix, Matrix]:
         """QR decomposition. Returns (Q, R)."""
         q, r = np.linalg.qr(self._data)
         return Matrix(q), Matrix(r)
 
-    def decompose_svd(self) -> tuple["Matrix", np.ndarray, "Matrix"]:
+    def decompose_svd(self) -> tuple[Matrix, np.ndarray, Matrix]:
         """Singular value decomposition. Returns (U, singular_values, Vt)."""
         u, s, vt = np.linalg.svd(self._data)
         return Matrix(u), s, Matrix(vt)
 
-    def decompose_cholesky(self) -> "Matrix":
+    def decompose_cholesky(self) -> Matrix:
         """Cholesky decomposition for symmetric positive-definite matrices."""
         if not self.is_square:
             raise MatrixError("Cholesky decomposition requires a square matrix")
@@ -171,7 +170,7 @@ class Matrix:
             raise MatrixError("Eigenvalues are only defined for square matrices")
         return np.linalg.eigvals(self._data)
 
-    def eigenvectors(self) -> tuple[np.ndarray, "Matrix"]:
+    def eigenvectors(self) -> tuple[np.ndarray, Matrix]:
         """Return (eigenvalues, eigenvectors) of a square matrix."""
         if not self.is_square:
             raise MatrixError("Eigenvectors are only defined for square matrices")
@@ -181,22 +180,22 @@ class Matrix:
     # ------------------------------------------------------------------
     # Operator overloads
     # ------------------------------------------------------------------
-    def __matmul__(self, other: "Matrix") -> "Matrix":
+    def __matmul__(self, other: Matrix) -> Matrix:
         return self.multiply(other)
 
-    def __add__(self, other: "Matrix") -> "Matrix":
+    def __add__(self, other: Matrix) -> Matrix:
         if self.shape != other.shape:
             raise MatrixError(f"Cannot add matrices with shapes {self.shape} and {other.shape}")
         return Matrix(self._data + other.data)
 
-    def __sub__(self, other: "Matrix") -> "Matrix":
+    def __sub__(self, other: Matrix) -> Matrix:
         if self.shape != other.shape:
             raise MatrixError(
                 f"Cannot subtract matrices with shapes {self.shape} and {other.shape}"
             )
         return Matrix(self._data - other.data)
 
-    def __mul__(self, scalar: float) -> "Matrix":
+    def __mul__(self, scalar: float) -> Matrix:
         return Matrix(self._data * scalar)
 
     __rmul__ = __mul__

@@ -3,8 +3,11 @@ Gaussian Quadrature against a known analytic result.
 """
 
 from __future__ import annotations
+
 import math
+
 from usel.solvers import gaussian_quadrature, simpson, trapezoidal
+
 
 def main() -> None:
     result_trap = trapezoidal(math.sin, 0.0, math.pi, n=1000)
