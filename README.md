@@ -32,26 +32,6 @@ cd usel
 uv sync --group dev
 ```
 
-## Quick Start
-
-```python
-from usel.math import Matrix
-
-A = Matrix.random(100, 100)
-B = Matrix.identity(100)
-C = A @ B
-print(C.shape)
-```
-
-```python
-from usel.solvers import rk4
-
-def decay(t, y):
-    return -y
-
-t, y = rk4(decay, t0=0.0, y0=1.0, t_end=5.0, h=0.01)
-```
-
 See the [examples](examples/) directory for more, including eigenvalue
 solving, ODE integration, FFT analysis, and numerical integration.
 
