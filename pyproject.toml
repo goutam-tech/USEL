@@ -4,12 +4,15 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "usel"
-version = "1.0.0"
+version = "1.0.1"
 description = "An open-source, CPU-only scientific computing framework focused on quantum physics simulations and numerical methods."
-authors = [{ name = "Goutam Parashuram Gotur" }]
+authors = [
+    { name = "Goutam Parashuram Gotur", email = "goutamgotur2006@outlook.com" },
+    { name = "K R Raaghavindhra", email = "raaghavindhra@gmail.com" }
+]
 license = { text = "MIT" }
 readme = "README.md"
-keywords = ["scientific-computing", "numerical-methods", "physics", "linear-algebra"]
+keywords = ["scientific-computing", "numerical-methods", "physics", "linear-algebra", "computional-physics", "dirac-equation", "mathematics", "open-source","quantum-mechanics"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Science/Research",
@@ -18,6 +21,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Topic :: Scientific/Engineering :: Physics",
     "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Scientific/Engineering :: Chemistry",
 ]
 
 requires-python = ">=3.11"
