@@ -36,19 +36,28 @@ jobs:
 
       - id: release
         run: |
-          VERSION=$(poetry version -s)
-          echo "new_version=$VERSION" >> $GITHUB_OUTPUT
-          echo "tag_name=$VERSION" >> $GITHUB_OUTPUT
-          echo "suffix=" >> $GITHUB_OUTPUT
+          VERSION=$(python - <<'PY'
+          import tomllib
+          with open("pyproject.toml","rb") as f:
+              print(tomllib.load(f)["project"]["version"])
+          PY
+          )
 
-          if git rev-parse "$VERSION" >/dev/null 2>&1; then
-            echo "Tag exists."
+          echo "Version: $VERSION"
+
+          echo "new_version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag_name=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "suffix=" >> "$GITHUB_OUTPUT"
+
+          if git ls-remote --exit-code --tags origin "refs/tags/$VERSION" >/dev/null 2>&1; then
+            echo "Tag '$VERSION' already exists."
             exit 1
           fi
 
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git tag "$VERSION"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git tag -a "$VERSION" -m "Release $VERSION"
           git push origin "$VERSION"
 
   check_pypi:
