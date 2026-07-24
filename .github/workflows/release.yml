@@ -66,7 +66,7 @@ jobs:
     steps:
       - run: |
           response=$(curl -s https://pypi.org/pypi/${PACKAGE_NAME}/json || true)
-          latest=$(echo "$response" | jq -r '.releases|keys_unsorted|last // "0.0.0"')
+          latest=$(echo "$response" | jq -r 'if type=="object" and has("releases") then (.releases|keys_unsorted|last // "0.0.0") else "0.0.0" end')
           echo "Latest=$latest"
           if [ "$latest" = "${{ needs.details.outputs.new_version }}" ]; then
             echo "Already released."
