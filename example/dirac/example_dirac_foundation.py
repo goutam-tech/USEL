@@ -11,7 +11,6 @@ from usel.dirac.gamma_matrices import (
 
 
 def main():
-
     print("=== DIRAC MODULE FOUNDATION TEST ===\n")
 
     print("Speed of light:", SI.c)
