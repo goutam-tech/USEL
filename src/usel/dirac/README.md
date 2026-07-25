@@ -23,18 +23,9 @@ This module provides:
 - Complete Pauli and Dirac matrix library
 - Spinor normalisation and expectation values
 
-## Quick Start
+# Quick Start
 
-```python
-from usel.dirac import DiracSolver
-import numpy as np
-
-# Free particle plane wave
-solver = DiracSolver(x=np.linspace(-5, 5, 100))
-result = solver.solve_plane_wave(momentum=1.0, t_end=5.0, dt=0.01)
-
-print(result.energy)             # E = sqrt((pc)² + (mc²)²)
-print(result.spin_expectation)   # ⟨σ_x⟩, ⟨σ_y⟩, ⟨σ_z⟩ over time
+Refer the examples [Some examples](example\dirac)
 ```
 
 ## API Reference
