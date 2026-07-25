@@ -5,7 +5,6 @@ import numpy as np
 
 
 def plot_probability(x, probability, title="Dirac Probability Density"):
-
     plt.figure(figsize=(8, 4))
 
     plt.plot(x, probability)
@@ -24,7 +23,6 @@ def plot_probability(x, probability, title="Dirac Probability Density"):
 
 
 def plot_spinor_components(x, spinor, title="Dirac Spinor Components"):
-
     if spinor.shape[0] != 4:
         raise ValueError("Dirac spinor must have 4 components")
 
@@ -51,7 +49,6 @@ def plot_spinor_components(x, spinor, title="Dirac Spinor Components"):
 
 
 def plot_spin_expectation(t, spin, title="Spin Expectation"):
-
     plt.figure(figsize=(8, 4))
 
     labels = ["Sx", "Sy", "Sz"]
@@ -75,7 +72,6 @@ def plot_spin_expectation(t, spin, title="Spin Expectation"):
 
 
 def plot_probability_evolution(x, probability_history, times=None):
-
     plt.figure(figsize=(8, 5))
 
     if times is None:

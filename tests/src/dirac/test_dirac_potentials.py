@@ -9,7 +9,6 @@ from usel.dirac.potentials import (
 
 
 def test_free_potential():
-
     x = np.linspace(-5, 5, 20)
 
     V = free_potential(x)
@@ -20,7 +19,6 @@ def test_free_potential():
 
 
 def test_harmonic_potential():
-
     x = np.array([-2, 0, 2])
 
     V = harmonic_potential(x, strength=1)
@@ -31,7 +29,6 @@ def test_harmonic_potential():
 
 
 def test_barrier_potential():
-
     x = np.linspace(0, 10, 11)
 
     V = barrier_potential(x, height=5, start=3, end=7)
@@ -42,7 +39,6 @@ def test_barrier_potential():
 
 
 def test_scalar_potential():
-
     values = np.array([1, 2, 3])
 
     potential = ScalarPotential(values)

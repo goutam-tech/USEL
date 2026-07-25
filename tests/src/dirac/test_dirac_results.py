@@ -7,7 +7,6 @@ from usel.dirac.results import DiracResult
 
 
 def create_result():
-
     spinor = np.ones((5, 4, 10), dtype=complex)
 
     probability = np.ones((5, 10))
@@ -20,14 +19,12 @@ def create_result():
 
 
 def test_result_creation():
-
     result = create_result()
 
     assert result.spinor.shape == (5, 4, 10)
 
 
 def test_total_probability():
-
     result = create_result()
 
     total = result.total_probability
@@ -36,7 +33,6 @@ def test_total_probability():
 
 
 def test_upper_component():
-
     result = create_result()
 
     upper = result.upper_component
@@ -45,7 +41,6 @@ def test_upper_component():
 
 
 def test_lower_component():
-
     result = create_result()
 
     lower = result.lower_component
@@ -54,7 +49,6 @@ def test_lower_component():
 
 
 def test_result_is_frozen():
-
     result = create_result()
 
     with pytest.raises(dataclasses.FrozenInstanceError):

@@ -7,7 +7,6 @@ from usel.dirac.propagators import (
 
 
 def test_unitary_propagator_identity():
-
     H = np.zeros((4, 4), dtype=complex)
 
     U = unitary_propagator(H, dt=1)
@@ -16,7 +15,6 @@ def test_unitary_propagator_identity():
 
 
 def test_unitary_propagator_shape():
-
     H = np.eye(8, dtype=complex)
 
     U = unitary_propagator(H, dt=0.1)
@@ -25,7 +23,6 @@ def test_unitary_propagator_shape():
 
 
 def test_apply_propagator_shape():
-
     U = np.eye(20, dtype=complex)
 
     psi = np.ones((4, 5), dtype=complex)
@@ -36,7 +33,6 @@ def test_apply_propagator_shape():
 
 
 def test_apply_identity_propagator():
-
     U = np.eye(12, dtype=complex)
 
     psi = np.random.random((4, 3))

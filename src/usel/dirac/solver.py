@@ -63,7 +63,6 @@ class DiracSolver:
         c=C_LIGHT,
         hbar=HBAR,
     ):
-
         x = np.asarray(x)
 
         if x.ndim != 1:

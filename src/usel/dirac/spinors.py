@@ -18,7 +18,6 @@ DIRAC_I: np.ndarray = np.eye(4, dtype=np.complex128)
 
 
 def gamma_matrices_dirac():
-
     zero = np.zeros((2, 2), dtype=np.complex128)
 
     gamma0 = np.block([[PAULI_I, zero], [zero, -PAULI_I]])
@@ -33,29 +32,24 @@ def gamma_matrices_dirac():
 
 
 def dirac_alpha_matrices():
-
     g0, g1, g2, g3 = gamma_matrices_dirac()
 
     return (g0 @ g1, g0 @ g2, g0 @ g3)
 
 
 def dirac_beta():
-
     return gamma_matrices_dirac()[0]
 
 
 def spin_up():
-
     return np.array([1, 0], dtype=np.complex128)
 
 
 def spin_down():
-
     return np.array([0, 1], dtype=np.complex128)
 
 
 def positive_energy_spinor(momentum: np.ndarray, mass: float, energy: float, spin: str = "up"):
-
     if spin == "up":
         chi = spin_up()
 
@@ -77,7 +71,6 @@ def positive_energy_spinor(momentum: np.ndarray, mass: float, energy: float, spi
 
 
 def negative_energy_spinor(momentum: np.ndarray, mass: float, energy: float, spin: str = "up"):
-
     if spin == "up":
         chi = spin_up()
 
@@ -97,7 +90,6 @@ def negative_energy_spinor(momentum: np.ndarray, mass: float, energy: float, spi
 
 
 def normalize_spinor(spinor: np.ndarray, dx: float = 1.0):
-
     norm = np.sqrt(np.sum(np.abs(spinor) ** 2) * dx)
 
     if norm == 0:
@@ -107,12 +99,10 @@ def normalize_spinor(spinor: np.ndarray, dx: float = 1.0):
 
 
 def spinor_norm(spinor: np.ndarray):
-
     return np.vdot(spinor, spinor)
 
 
 def spin_operator_z():
-
     zero = np.zeros((2, 2), dtype=np.complex128)
 
     sigma = np.block([[PAULI_Z, zero], [zero, PAULI_Z]])
@@ -121,7 +111,6 @@ def spin_operator_z():
 
 
 def spin_expectation(spinor: np.ndarray, operator=None):
-
     if operator is None:
         operator = spin_operator_z()
 
@@ -129,5 +118,4 @@ def spin_expectation(spinor: np.ndarray, operator=None):
 
 
 def verify_spinor_dimension(spinor):
-
     return spinor.shape[0] == 4

@@ -4,7 +4,6 @@ from usel.dirac.hamiltonian import DiracHamiltonian
 
 
 def test_free_hamiltonian_shape():
-
     x = np.linspace(-1, 1, 10)
 
     H = DiracHamiltonian(x)
@@ -15,7 +14,6 @@ def test_free_hamiltonian_shape():
 
 
 def test_hamiltonian_contains_mass_term():
-
     x = np.linspace(0, 1, 5)
 
     mass = 2
@@ -28,7 +26,6 @@ def test_hamiltonian_contains_mass_term():
 
 
 def test_hamiltonian_with_potential():
-
     x = np.linspace(0, 1, 5)
 
     V = np.ones(5)
@@ -41,7 +38,6 @@ def test_hamiltonian_with_potential():
 
 
 def test_hamiltonian_matrix_complex():
-
     x = np.linspace(0, 1, 6)
 
     H = DiracHamiltonian(x)

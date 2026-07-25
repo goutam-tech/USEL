@@ -6,12 +6,10 @@ from usel.exceptions import ValidationError
 
 
 def create_grid():
-
     return np.linspace(-1, 1, 10)
 
 
 def create_spinor(n):
-
     psi = np.zeros((4, n), dtype=complex)
 
     psi[0, n // 2] = 1
@@ -20,7 +18,6 @@ def create_spinor(n):
 
 
 def test_solver_initialization():
-
     x = create_grid()
 
     solver = DiracSolver(x)
@@ -31,13 +28,11 @@ def test_solver_initialization():
 
 
 def test_invalid_grid_dimension():
-
     with pytest.raises(ValidationError):
         DiracSolver(np.ones((2, 2)))
 
 
 def test_build_hamiltonian_shape():
-
     x = create_grid()
 
     solver = DiracSolver(x)
@@ -48,7 +43,6 @@ def test_build_hamiltonian_shape():
 
 
 def test_custom_potential():
-
     x = create_grid()
 
     V = np.ones(len(x))
@@ -59,7 +53,6 @@ def test_custom_potential():
 
 
 def test_energy_relation():
-
     solver = DiracSolver(create_grid())
 
     E = solver.energy(momentum=2)
@@ -70,7 +63,6 @@ def test_energy_relation():
 
 
 def test_solver_output_shape():
-
     x = create_grid()
 
     solver = DiracSolver(x)
