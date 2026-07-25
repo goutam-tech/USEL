@@ -41,7 +41,6 @@ def test_absorbing_reduces_edges():
 
 
 def test_absorbing_keeps_shape():
-
     psi = np.random.random((4, 50))
 
     result = absorbing(psi.copy())

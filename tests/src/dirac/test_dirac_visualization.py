@@ -14,7 +14,6 @@ from usel.dirac.visualization import (
 
 
 def test_plot_probability():
-
     x = np.linspace(0, 1, 10)
 
     probability = np.ones(10)
@@ -23,7 +22,6 @@ def test_plot_probability():
 
 
 def test_plot_spinor_components():
-
     x = np.linspace(0, 1, 10)
 
     spinor = np.ones((4, 10))
@@ -32,7 +30,6 @@ def test_plot_spinor_components():
 
 
 def test_invalid_spinor_plot():
-
     x = np.linspace(0, 1, 10)
 
     spinor = np.ones((2, 10))
@@ -42,7 +39,6 @@ def test_invalid_spinor_plot():
 
 
 def test_plot_spin_expectation():
-
     t = np.arange(5)
 
     spin = np.ones((5, 3))
@@ -51,7 +47,6 @@ def test_plot_spin_expectation():
 
 
 def test_probability_evolution():
-
     x = np.linspace(0, 1, 10)
 
     history = np.ones((5, 10))

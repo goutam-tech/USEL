@@ -40,7 +40,6 @@ def sigma_z() -> np.ndarray:
 
 
 def identity_2():
-
     return np.eye(2, dtype=complex)
 
 
@@ -75,17 +74,14 @@ def gamma_i(sigma: np.ndarray) -> np.ndarray:
 
 
 def gamma_1():
-
     return gamma_i(sigma_x())
 
 
 def gamma_2():
-
     return gamma_i(sigma_y())
 
 
 def gamma_3():
-
     return gamma_i(sigma_z())
 
 

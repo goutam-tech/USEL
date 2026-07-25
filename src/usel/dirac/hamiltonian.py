@@ -8,7 +8,6 @@ from usel.dirac.spinors import dirac_beta
 
 class DiracHamiltonian:
     def __init__(self, x, mass=1.0, c=1.0, hbar=1.0, potential=None):
-
         self.x = x
 
         self.mass = mass
@@ -26,7 +25,6 @@ class DiracHamiltonian:
             self.V = potential
 
     def matrix(self):
-
         n = len(self.x)
 
         H = self.operator.kinetic()

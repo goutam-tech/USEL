@@ -4,12 +4,10 @@ from usel.dirac.evolution import DiracEvolution
 
 
 def create_zero_hamiltonian(size):
-
     return np.zeros((size, size), dtype=complex)
 
 
 def test_propagator_identity_for_zero_hamiltonian():
-
     H = create_zero_hamiltonian(8)
 
     evolution = DiracEvolution(H)
@@ -20,7 +18,6 @@ def test_propagator_identity_for_zero_hamiltonian():
 
 
 def test_propagator_shape():
-
     H = np.eye(8, dtype=complex)
 
     evolution = DiracEvolution(H)
@@ -31,7 +28,6 @@ def test_propagator_shape():
 
 
 def test_step_preserves_spinor_shape():
-
     n = 5
 
     H = create_zero_hamiltonian(4 * n)
@@ -46,7 +42,6 @@ def test_step_preserves_spinor_shape():
 
 
 def test_step_applies_dirichlet_boundary():
-
     n = 10
 
     H = create_zero_hamiltonian(4 * n)
@@ -62,7 +57,6 @@ def test_step_applies_dirichlet_boundary():
 
 
 def test_evolve_history_length():
-
     n = 5
 
     H = create_zero_hamiltonian(4 * n)

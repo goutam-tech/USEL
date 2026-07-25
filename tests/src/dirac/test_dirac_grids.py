@@ -5,7 +5,6 @@ from usel.dirac.grids import DiracGrid
 
 
 def test_grid_creation():
-
     grid = DiracGrid(-5, 5, 100)
 
     assert grid.size == 100
@@ -14,20 +13,17 @@ def test_grid_creation():
 
 
 def test_grid_spacing():
-
     grid = DiracGrid(0, 10, 11)
 
     assert grid.dx == 1
 
 
 def test_grid_requires_minimum_points():
-
     with pytest.raises(ValueError):
         DiracGrid(0, 1, 2)
 
 
 def test_index_returns_nearest_point():
-
     grid = DiracGrid(0, 10, 11)
 
     index = grid.index(4.2)
@@ -36,7 +32,6 @@ def test_index_returns_nearest_point():
 
 
 def test_zero_field_shape():
-
     grid = DiracGrid(0, 1, 20)
 
     field = grid.zeros()
@@ -46,7 +41,6 @@ def test_zero_field_shape():
 
 
 def test_spinor_zero_shape():
-
     grid = DiracGrid(0, 1, 20)
 
     psi = grid.spinor_zeros()

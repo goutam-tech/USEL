@@ -18,17 +18,14 @@ from usel.dirac.boundary_conditions import dirichlet
 
 class DiracEvolution:
     def __init__(self, hamiltonian, hbar=1.0):
-
         self.H = hamiltonian
 
         self.hbar = hbar
 
     def propagator(self, dt):
-
         return expm(-1j * self.H * dt / self.hbar)
 
     def step(self, psi, dt):
-
         U = self.propagator(dt)
 
         n = psi.shape[1]
@@ -42,7 +39,6 @@ class DiracEvolution:
         return dirichlet(psi)
 
     def evolve(self, psi0, dt, steps):
-
         psi = psi0.copy()
 
         history = [psi.copy()]
