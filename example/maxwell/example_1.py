@@ -71,5 +71,6 @@ gauss_matter_residual, gauss_matter_ok = materials.gauss_law_electric_in_matter(
     D_in_water, rho_free=0
 )
 print(
-    f"Gauss's law in matter, div(D) - rho_free = {gauss_matter_residual}  (satisfied: {gauss_matter_ok})"
+    "Gauss's law in matter, div(D) - rho_free = "
+    f"{gauss_matter_residual}  (satisfied: {gauss_matter_ok})"
 )

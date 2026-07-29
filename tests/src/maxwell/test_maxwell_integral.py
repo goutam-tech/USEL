@@ -1,5 +1,6 @@
 import numpy as np
 import sympy as sp
+
 from usel.maxwell import integral
 
 t = sp.symbols("t", real=True)
@@ -31,9 +32,9 @@ class TestGaussLawIntegralSphere:
 
 class TestAmpereLawIntegralCircle:
     def test_wire_field_matches_enclosed_current(self):
-        I, mu0 = sp.symbols("I mu0", positive=True)
-        B_phi = mu0 * I / (2 * sp.pi * r)
-        residual, ok = integral.ampere_law_integral_circle(B_phi, r, r, I, mu0=mu0)
+        L, mu0 = sp.symbols("I mu0", positive=True)
+        B_phi = mu0 * L / (2 * sp.pi * r)
+        residual, ok = integral.ampere_law_integral_circle(B_phi, r, r, L, mu0=mu0)
         assert ok
         assert residual == 0
 
@@ -46,8 +47,8 @@ class TestAmpereLawIntegralCircle:
         assert residual == 0
 
     def test_wrong_enclosed_current_fails(self):
-        I, wrong_I, mu0 = sp.symbols("I wrong_I mu0", positive=True)
-        B_phi = mu0 * I / (2 * sp.pi * r)
+        curr, wrong_I, mu0 = sp.symbols("I wrong_I mu0", positive=True)
+        B_phi = mu0 * curr / (2 * sp.pi * r)
         residual, ok = integral.ampere_law_integral_circle(B_phi, r, r, wrong_I, mu0=mu0)
         assert not ok
 
@@ -94,22 +95,30 @@ class TestAmpereMaxwellIntegral:
 
 class TestNumericDifferentialOperators:
     def test_divergence_of_radial_field(self):
-        field = lambda x, y, z: np.array([x, y, z])
+        def field(x, y, z):
+            return np.array([x, y, z])
+
         div = integral.numeric_divergence(field, (0.7, -0.3, 1.1))
         assert abs(div - 3.0) < 1e-4
 
     def test_divergence_of_uniform_field_is_zero(self):
-        field = lambda x, y, z: np.array([1.0, 2.0, 3.0])
+        def field(x, y, z):
+            return np.array([1.0, 2.0, 3.0])
+
         div = integral.numeric_divergence(field, (0.1, 0.2, 0.3))
         assert abs(div) < 1e-8
 
     def test_curl_of_rotation_field(self):
-        field = lambda x, y, z: np.array([-y, x, 0.0])
+        def field(x, y, z):
+            return np.array([-y, x, 0.0])
+
         curl_vec = integral.numeric_curl(field, (0.5, 0.5, 0.0))
         np.testing.assert_allclose(curl_vec, [0.0, 0.0, 2.0], atol=1e-4)
 
     def test_curl_of_irrotational_field_is_zero(self):
-        field = lambda x, y, z: np.array([2 * x, 2 * y, 2 * z])
+        def field(x, y, z):
+            return np.array([2 * x, 2 * y, 2 * z])
+
         curl_vec = integral.numeric_curl(field, (0.3, -0.2, 0.6))
         np.testing.assert_allclose(curl_vec, [0.0, 0.0, 0.0], atol=1e-4)
 
@@ -117,18 +126,26 @@ class TestNumericDifferentialOperators:
 class TestNumericFluxAndCirculation:
     def test_radial_field_flux_through_sphere_matches_divergence_theorem(self):
         R = 1.0
-        field = lambda x, y, z: np.array([x, y, z])
-        param = lambda u, v: np.array(
-            [R * np.sin(u) * np.cos(v), R * np.sin(u) * np.sin(v), R * np.cos(u)]
-        )
+
+        def field(x, y, z):
+            return np.array([x, y, z])
+
+        def param(u, v):
+            return np.array([R * np.sin(u) * np.cos(v), R * np.sin(u) * np.sin(v), R * np.cos(u)])
+
         flux = integral.numeric_surface_flux(field, param, (1e-6, np.pi - 1e-6), (0, 2 * np.pi))
         expected = 4 * np.pi * R**3
         assert abs(flux - expected) / expected < 1e-3
 
     def test_rotation_field_circulation_around_circle(self):
         R = 1.5
-        field = lambda x, y, z: np.array([-y, x, 0.0])
-        curve = lambda tp: np.array([R * np.cos(tp), R * np.sin(tp), 0.0])
+
+        def field(x, y, z):
+            return np.array([-y, x, 0.0])
+
+        def curve(tp):
+            return np.array([R * np.cos(tp), R * np.sin(tp), 0.0])
+
         circulation = integral.numeric_line_circulation(field, curve, (0, 2 * np.pi))
         expected = 2 * np.pi * R**2
         assert abs(circulation - expected) / expected < 1e-3
@@ -136,7 +153,9 @@ class TestNumericFluxAndCirculation:
 
 class TestDivergenceTheoremCheck:
     def test_radial_field_over_unit_box(self):
-        field = lambda x, y, z: np.array([x, y, z])
+        def field(x, y, z):
+            return np.array([x, y, z])
+
         flux, vol_integral, rel_diff, agrees = integral.divergence_theorem_check(
             field, ((0, 1), (0, 1), (0, 1))
         )
@@ -145,7 +164,9 @@ class TestDivergenceTheoremCheck:
         assert abs(vol_integral - 3.0) < 1e-2
 
     def test_uniform_field_has_zero_net_flux(self):
-        field = lambda x, y, z: np.array([1.0, 0.0, 0.0])
+        def field(x, y, z):
+            return np.array([1.0, 0.0, 0.0])
+
         flux, vol_integral, rel_diff, agrees = integral.divergence_theorem_check(
             field, ((0, 1), (0, 1), (0, 1))
         )
@@ -155,7 +176,9 @@ class TestDivergenceTheoremCheck:
 
 class TestStokesTheoremCheck:
     def test_rotation_field_over_unit_square(self):
-        field = lambda x, y, z: np.array([-y, x, 0.0])
+        def field(x, y, z):
+            return np.array([-y, x, 0.0])
+
         circulation, curl_flux, rel_diff, agrees = integral.stokes_theorem_check(
             field, ((0, 1), (0, 1)), plane="xy", offset=0.0
         )
@@ -164,7 +187,9 @@ class TestStokesTheoremCheck:
         assert abs(curl_flux - 2.0) < 1e-2
 
     def test_irrotational_field_has_zero_circulation(self):
-        field = lambda x, y, z: np.array([2 * x, 2 * y, 2 * z])
+        def field(x, y, z):
+            return np.array([2 * x, 2 * y, 2 * z])
+
         circulation, curl_flux, rel_diff, agrees = integral.stokes_theorem_check(
             field, ((0, 1), (0, 1)), plane="xy", offset=0.0
         )

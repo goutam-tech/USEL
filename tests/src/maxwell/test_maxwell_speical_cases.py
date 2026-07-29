@@ -1,4 +1,5 @@
 import sympy as sp
+
 from usel.maxwell import core, special_cases
 from usel.maxwell.constants import EPSILON_0, MU_0
 
@@ -28,15 +29,15 @@ class TestCoulombsLaw:
 
 class TestBiotSavartLaw:
     def test_matches_ampere_law_derivation(self):
-        I, mu0 = sp.symbols("I mu0", positive=True)
-        residual, ok = special_cases.biot_savart_matches_ampere(I, r, r, mu0=mu0)
+        curr, mu0 = sp.symbols("I mu0", positive=True)
+        residual, ok = special_cases.biot_savart_matches_ampere(curr, r, r, mu0=mu0)
         assert ok
         assert residual == 0
 
     def test_field_scales_inverse_with_distance(self):
-        I, mu0 = sp.symbols("I mu0", positive=True)
-        B_r = special_cases.biot_savart_wire_field(I, r, mu0=mu0)
-        B_2r = special_cases.biot_savart_wire_field(I, 2 * r, mu0=mu0)
+        curr, mu0 = sp.symbols("I mu0", positive=True)
+        B_r = special_cases.biot_savart_wire_field(curr, r, mu0=mu0)
+        B_2r = special_cases.biot_savart_wire_field(curr, 2 * r, mu0=mu0)
         assert sp.simplify(B_r / B_2r - 2) == 0
 
 

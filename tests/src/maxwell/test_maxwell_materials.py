@@ -1,5 +1,6 @@
 import pytest
 import sympy as sp
+
 from usel.maxwell import core, materials
 from usel.maxwell.constants import EPSILON_0, MU_0
 

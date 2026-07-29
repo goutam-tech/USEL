@@ -1,4 +1,5 @@
 import sympy as sp
+
 from usel.maxwell import core, potentials
 
 N = core.N

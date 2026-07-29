@@ -1,8 +1,6 @@
 import sympy as sp
-import pytest
 
 from usel.maxwell import core, energy, waves
-from usel.maxwell.constants import EPSILON_0, MU_0, C_LIGHT
 
 N = core.N
 x, y, z = N.x, N.y, N.z

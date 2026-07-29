@@ -1,4 +1,5 @@
 import sympy as sp
+
 from usel.maxwell import boundary, core
 
 N = core.N
@@ -111,11 +112,13 @@ class TestTangentialHDiscontinuity:
 
     def test_wrong_surface_current_fails(self):
         Kx, wrong_Kx = sp.symbols("Kx wrong_Kx", positive=True)
-        K = Kx * N.i
+
         H1 = -Kx * N.j
         H2 = 0 * N.j
         wrong_K = wrong_Kx * N.i
+
         residual, ok = boundary.check_tangential_H_discontinuity(H1, H2, N.k, wrong_K)
+
         assert not ok
 
 

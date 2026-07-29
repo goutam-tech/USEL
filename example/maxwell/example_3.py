@@ -43,7 +43,7 @@ print(f"With omega = c*k imposed, all four Maxwell equations satisfied: {report.
 
 trans = waves.transverse_check(E_wave, B_wave, N.k)
 print("Transversality (E, B, k mutually orthogonal):")
-for label, (residual, ok) in trans.items():
+for label, (_residual, ok) in trans.items():
     print(f"  {label}: {ok}")
 
 section("2. Energy flow and radiation pressure  [maxwell.energy]")
@@ -96,7 +96,9 @@ print(f"Original field snapshot: E = {E_snapshot}, B = {B_snapshot}")
 print(f"Boosted (velocity v along x): E' = {E_boosted}")
 print(f"                              B' = {B_boosted}")
 print(
-    f"Invariant E^2 - c^2*B^2  before: {sp.simplify(inv_before[0])}   after: {sp.simplify(inv_after[0])}"
+    "Invariant E^2 - c^2*B^2 before: "
+    f"{sp.simplify(inv_before[0])}   "
+    f"after: {sp.simplify(inv_after[0])}"
 )
 print(f"Invariant E.B            before: {inv_before[1]}   after: {inv_after[1]}")
 print(f"Both invariants preserved under boost: {invariants_ok}")

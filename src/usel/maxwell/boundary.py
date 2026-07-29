@@ -1,6 +1,7 @@
 import sympy as sp
-from .core import N, is_zero_scalar, is_zero_vector, simplify_vector
 from sympy.vector import CoordSys3D, Vector
+
+from .core import N, is_zero_scalar, is_zero_vector, simplify_vector
 
 
 def decompose_field(F: Vector, normal: Vector, coord_sys: CoordSys3D = N):

@@ -6,16 +6,18 @@ Currently implemented:
     maxwell.core       - the four Maxwell equations (differential form)
 """
 
-from . import constants
-from . import core
-from . import materials
-from . import potentials
-from . import integral
-from . import waves
-from . import energy
-from . import boundary
-from . import covariant
-from . import special_cases
+from . import (
+    boundary,
+    constants,
+    core,
+    covariant,
+    energy,
+    integral,
+    materials,
+    potentials,
+    special_cases,
+    waves,
+)
 
 __all__ = [
     "constants",

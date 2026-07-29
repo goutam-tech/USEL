@@ -45,7 +45,11 @@ print(f"flux - Q_enc/epsilon0 = {residual}   (exact match: {ok})")
 
 section("3. Divergence theorem, numerically  [maxwell.integral]")
 
-radial_field = lambda x, y, z: np.array([x, y, z])
+
+def radial_field(x, y, z):
+    return np.array([x, y, z])
+
+
 R = 1.0
 flux = integral.numeric_surface_flux(
     radial_field,
@@ -67,7 +71,11 @@ print(f"  agree within tolerance: {agrees}")
 
 section("4. Stokes' theorem, numerically  [maxwell.integral]")
 
-rotation_field = lambda x, y, z: np.array([-y, x, 0.0])
+
+def rotation_field(x, y, z):
+    return np.array([-y, x, 0.0])
+
+
 circulation, curl_flux, rel_diff, agrees = integral.stokes_theorem_check(
     rotation_field, ((0, 1), (0, 1)), plane="xy"
 )

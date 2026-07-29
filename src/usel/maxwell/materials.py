@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import Union
 
 import sympy as sp
 from sympy.vector import CoordSys3D, Vector
@@ -15,7 +14,7 @@ from .core import (
     time_derivative,
 )
 
-Number = Union[float, int, sp.Expr]
+Number = float | int | sp.Expr
 
 
 @dataclass(frozen=True)

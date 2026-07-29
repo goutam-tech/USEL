@@ -1,4 +1,5 @@
 import sympy as sp
+
 from usel.maxwell import core
 from usel.maxwell.constants import C_LIGHT, EPSILON_0, MU_0, speed_of_light_from_em_constants
 

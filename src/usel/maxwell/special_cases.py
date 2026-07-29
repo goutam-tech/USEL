@@ -14,13 +14,13 @@ def coulomb_field_matches_gauss(q, r_symbol: sp.Symbol, r_val, epsilon0=EPSILON_
     return gauss_law_integral_sphere(E_r, r_symbol, r_val, Q_enc=q, epsilon0=epsilon0)
 
 
-def biot_savart_wire_field(I, r, mu0=MU_0):
-    return mu0 * I / (2 * sp.pi * r)
+def biot_savart_wire_field(current, r, mu0=MU_0):
+    return mu0 * current / (2 * sp.pi * r)
 
 
-def biot_savart_matches_ampere(I, r_symbol: sp.Symbol, r_val, mu0=MU_0):
-    B_phi = mu0 * I / (2 * sp.pi * r_symbol)
-    return ampere_law_integral_circle(B_phi, r_symbol, r_val, I_enc=I, mu0=mu0)
+def biot_savart_matches_ampere(current, r_symbol: sp.Symbol, r_val, mu0=MU_0):
+    B_phi = mu0 * current / (2 * sp.pi * r_symbol)
+    return ampere_law_integral_circle(B_phi, r_symbol, r_val, I_enc=current, mu0=mu0)
 
 
 def continuity_equation_residual_1d(Jx, rho, x: sp.Symbol, t: sp.Symbol):
