@@ -10,7 +10,6 @@ def coulombs_law(q1, q2, r, epsilon0=EPSILON_0):
 
 
 def coulomb_field_matches_gauss(q, r_symbol: sp.Symbol, r_val, epsilon0=EPSILON_0):
-
     E_r = q / (4 * sp.pi * epsilon0 * r_symbol**2)
     return gauss_law_integral_sphere(E_r, r_symbol, r_val, Q_enc=q, epsilon0=epsilon0)
 

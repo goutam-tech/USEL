@@ -4,7 +4,6 @@ from sympy.vector import CoordSys3D, Vector
 
 
 def decompose_field(F: Vector, normal: Vector, coord_sys: CoordSys3D = N):
-
     F_perp = F.dot(normal) * normal
     F_parallel = F - F_perp
     return F_perp, F_parallel

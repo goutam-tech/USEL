@@ -56,7 +56,6 @@ class TestGaussLawElectric:
         assert residual == -rho0 / eps0
 
     def test_linear_field_matching_uniform_charge_density(self):
-
         rho0, eps0 = sp.symbols("rho0 epsilon_0", positive=True)
         r_vec = x * N.i + y * N.j + z * N.k
         E = (rho0 / (3 * eps0)) * r_vec
@@ -96,7 +95,6 @@ class TestFaradayLaw:
         assert ok
 
     def test_time_varying_uniform_B_with_curl_free_E_fails(self):
-
         E0, B0 = sp.symbols("E0 B0", positive=True)
         E = E0 * N.i
         B = B0 * t * N.k
@@ -105,7 +103,6 @@ class TestFaradayLaw:
         assert core.is_zero_vector(residual - B0 * N.k)
 
     def test_matching_time_varying_fields_satisfy_law(self):
-
         B0 = sp.symbols("B0", positive=True)
         B = B0 * t * N.k
         E = -B0 * x * N.j
@@ -123,7 +120,6 @@ class TestAmpereMaxwellLaw:
         assert ok
 
     def test_displacement_current_alone_produces_consistent_B(self):
-
         E0, mu0, eps0 = sp.symbols("E0 mu0 epsilon_0", positive=True)
         E = E0 * t * N.i
         J = 0 * N.i

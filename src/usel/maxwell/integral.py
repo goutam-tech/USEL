@@ -43,7 +43,6 @@ def numeric_surface_flux(
     h: float = 1e-6,
     epsabs: float = 1e-8,
 ) -> float:
-
     def integrand(v, u):
         r = np.asarray(param_func(u, v), dtype=float)
         r_u = (np.asarray(param_func(u + h, v)) - np.asarray(param_func(u - h, v))) / (2 * h)
@@ -65,7 +64,6 @@ def numeric_line_circulation(
     h: float = 1e-6,
     epsabs: float = 1e-8,
 ) -> float:
-
     def integrand(tp):
         r = np.asarray(curve_func(tp), dtype=float)
         r_prime = (np.asarray(curve_func(tp + h)) - np.asarray(curve_func(tp - h))) / (2 * h)
@@ -112,7 +110,6 @@ def divergence_theorem_check(
     box_bounds: tuple[tuple[float, float], tuple[float, float], tuple[float, float]],
     rel_tol: float = 1e-3,
 ):
-
     (x0, x1), (y0, y1), (z0, z1) = box_bounds
 
     def face_flux(fixed_axis, fixed_val, sign, u_bounds, v_bounds, u_axis, v_axis):
@@ -164,7 +161,6 @@ def stokes_theorem_check(
     offset: float = 0.0,
     rel_tol: float = 1e-3,
 ):
-
     (u0, u1), (v0, v1) = rect_bounds
 
     axes = {"xy": (0, 1, 2), "yz": (1, 2, 0), "zx": (2, 0, 1)}
