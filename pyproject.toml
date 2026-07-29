@@ -4,12 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "usel"
-version = "1.0.5"
+version = "1.0.6"
 description = "An open-source, CPU-only scientific computing framework focused on quantum physics simulations and numerical methods."
 
 authors = [
-    { name = "Goutam Parashuram Gotur" },
-    { name = "K R Raaghavindhra" }
+    { name = "Goutam Parashuram Gotur", email= "goutamgotur2006@outlook.com" },
+    { name = "K R Raaghavindhra", email="raaghavindhra@gmail.com" }
 ]
 
 license = { text = "MIT" }
@@ -24,7 +24,9 @@ keywords = [
     "dirac-equation",
     "mathematics",
     "open-source",
-    "quantum-mechanics"
+    "quantum-mechanics",
+    "schrondingers",
+    "maxwell"
 ]
 
 classifiers = [
