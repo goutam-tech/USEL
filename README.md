@@ -69,28 +69,24 @@ computing, and AI integration. These are planned for future releases (see
 
 ## Roadmap
 
-- v1.0 — Scientific Computing Foundation
-  - Core numerical engine
-  - Linear algebra utilities
-  - Matrix operations
-  - Numerical solvers
-  - FFT and mathematical utilities
-  - Configuration, logging, and CLI support
+- v1.0 — Schrödinger Module
+  - Non-relativistic quantum state evolution
+  - Grid, operator, and Hamiltonian construction
+  - Multiple time-evolution schemes (Crank-Nicolson, split-operator, RK4)
 
-- v2.0 — Quantum Physics Engine
-  - Schrödinger equation module
-  - Quantum wavefunction utilities
-  - Potential models
-  - Hamiltonian construction
-  - Time evolution and visualization
+- v2.0 — Dirac Equation Module
+  - Relativistic 1D Dirac equation solver
+  - Spinor algebra and Pauli/Dirac matrix library
+  - Matrix-exponential propagation
 
-- v3.0 — Relativistic & Computational Physics
-  - Dirac equation module
-  - Spinor algebra
-  - Gamma matrix operations
-  - Relativistic particle simulations
-  - Maxwell equation module
+- v3.0 — Maxwell Equation Module
   - Electromagnetic field simulations
+  - Symbolic and numerical field solvers
+
+- v4.0 — Black-Scholes Module
+  - Analytical option pricing, Greeks, and put-call parity
+  - Implied volatility and Black-Scholes PDE solver
+  - Monte Carlo pricing with variance reduction
 
 Still more planning is going on this.
 
@@ -119,7 +115,7 @@ guidelines.
 
 ## Security
 
-usel performs no telemetry, no network communication, and no data
+USEL performs no telemetry, no network communication, and no data
 collection. It is fully offline capable.
 
 ## License

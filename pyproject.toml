@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "usel"
-version = "1.0.6"
+version = "1.0.7"
 description = "An open-source, CPU-only scientific computing framework focused on quantum physics simulations and numerical methods."
 
 authors = [
@@ -49,7 +49,8 @@ dependencies = [
     "sympy>=1.12",
     "pyyaml>=6.0",
     "toml>=0.10.2",
-    "matplotlib>=3.8"
+    "matplotlib>=3.8",
+    "pytest>=9.1.1",
 ]
 
 [project.urls]
