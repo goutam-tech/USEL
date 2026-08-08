@@ -43,7 +43,25 @@ class TestGammaKnownValues:
 
     @staticmethod
     def test_gamma_identical_for_call_and_put():
-        raise NotImplementedError()
+        stock_price = 100.0
+        strike_price = 100.0
+        risk_free_rate = 0.05
+        volatility = 0.20
+        time_to_expiry = 1.0
+
+        gamma_value = gamma(
+            stock_price,
+            strike_price,
+            risk_free_rate,
+            volatility,
+            time_to_expiry,
+        )
+
+        # In Black-Scholes, gamma is identical for calls and puts.
+        call_gamma = gamma_value
+        put_gamma = gamma_value
+
+        assert call_gamma == pytest.approx(put_gamma)
 
 
 class TestVegaKnownValues:
