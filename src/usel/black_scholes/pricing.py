@@ -12,7 +12,7 @@ def _asarray(value: ArrayLike) -> NDArray[np.float64]:
 
 
 def _return_scalar_or_array(
-    original: ArrayLike,
+    _original: ArrayLike,
     result: NDArray[np.float64],
 ):
     result_arr = np.asarray(result)

@@ -7,21 +7,25 @@ from usel.black_scholes.pricing import call_price, put_price
 
 
 class TestCallPriceKnownValues:
-    def test_atm_call_no_dividend(self):
+    @staticmethod
+    def test_atm_call_no_dividend():
         price = call_price(100, 100, 0.05, 0.20, 1)
         assert price == pytest.approx(10.450583572185565, rel=1e-10)
 
-    def test_call_price_is_float(self):
+    @staticmethod
+    def test_call_price_is_float():
         price = call_price(100, 100, 0.05, 0.20, 1)
         assert isinstance(price, float)
 
 
 class TestPutPriceKnownValues:
-    def test_atm_put_no_dividend(self):
+    @staticmethod
+    def test_atm_put_no_dividend():
         price = put_price(100, 100, 0.05, 0.20, 1)
         assert price == pytest.approx(5.573526022256971, rel=1e-10)
 
-    def test_put_price_is_float(self):
+    @staticmethod
+    def test_put_price_is_float():
         price = put_price(100, 100, 0.05, 0.20, 1)
         assert isinstance(price, float)
 
@@ -72,112 +76,133 @@ class TestPutCallParity:
 
 
 class TestZeroTimeToExpiry:
-    def test_call_itm_at_expiry(self):
+    @staticmethod
+    def test_call_itm_at_expiry():
         price = call_price(110, 100, 0.05, 0.20, 0)
         assert price == pytest.approx(10.0, rel=1e-10)
 
-    def test_call_otm_at_expiry(self):
+    @staticmethod
+    def test_call_otm_at_expiry():
         price = call_price(90, 100, 0.05, 0.20, 0)
         assert price == pytest.approx(0.0, abs=1e-10)
 
-    def test_put_itm_at_expiry(self):
+    @staticmethod
+    def test_put_itm_at_expiry():
         price = put_price(90, 100, 0.05, 0.20, 0)
         assert price == pytest.approx(10.0, rel=1e-10)
 
-    def test_put_otm_at_expiry(self):
+    @staticmethod
+    def test_put_otm_at_expiry():
         price = put_price(110, 100, 0.05, 0.20, 0)
         assert price == pytest.approx(0.0, abs=1e-10)
 
-    def test_call_atm_at_expiry(self):
+    @staticmethod
+    def test_call_atm_at_expiry():
         price = call_price(100, 100, 0.05, 0.20, 0)
         assert price == pytest.approx(0.0, abs=1e-10)
 
-    def test_no_nan_or_inf_at_expiry(self):
+    @staticmethod
+    def test_no_nan_or_inf_at_expiry():
         call = call_price(100, 100, 0.05, 0.20, 0)
         put = put_price(100, 100, 0.05, 0.20, 0)
         assert np.isfinite(call)
         assert np.isfinite(put)
 
-    def test_no_warnings_at_expiry(self, recwarn):
+    @staticmethod
+    def test_no_warnings_at_expiry(recwarn):
         call_price(100, 100, 0.05, 0.20, 0)
         put_price(100, 100, 0.05, 0.20, 0)
         assert len(recwarn) == 0
 
 
 class TestCallPriceValidation:
-    def test_negative_stock_price_raises(self):
+    @staticmethod
+    def test_negative_stock_price_raises():
         with pytest.raises(ValueError):
             call_price(-100, 100, 0.05, 0.20, 1)
 
-    def test_zero_stock_price_raises(self):
+    @staticmethod
+    def test_zero_stock_price_raises():
         with pytest.raises(ValueError):
             call_price(0, 100, 0.05, 0.20, 1)
 
-    def test_negative_strike_price_raises(self):
+    @staticmethod
+    def test_negative_strike_price_raises():
         with pytest.raises(ValueError):
             call_price(100, -100, 0.05, 0.20, 1)
 
-    def test_zero_strike_price_raises(self):
+    @staticmethod
+    def test_zero_strike_price_raises():
         with pytest.raises(ValueError):
             call_price(100, 0, 0.05, 0.20, 1)
 
-    def test_negative_volatility_raises(self):
+    @staticmethod
+    def test_negative_volatility_raises():
         with pytest.raises(ValueError):
             call_price(100, 100, 0.05, -0.20, 1)
 
-    def test_zero_volatility_raises(self):
+    @staticmethod
+    def test_zero_volatility_raises():
         with pytest.raises(ValueError):
             call_price(100, 100, 0.05, 0.0, 1)
 
-    def test_negative_time_to_expiry_raises(self):
+    @staticmethod
+    def test_negative_time_to_expiry_raises():
         with pytest.raises(ValueError):
             call_price(100, 100, 0.05, 0.20, -1)
 
 
 class TestPutPriceValidation:
-    def test_negative_stock_price_raises(self):
+    @staticmethod
+    def test_negative_stock_price_raises():
         with pytest.raises(ValueError):
             put_price(-100, 100, 0.05, 0.20, 1)
 
-    def test_zero_strike_price_raises(self):
+    @staticmethod
+    def test_zero_strike_price_raises():
         with pytest.raises(ValueError):
             put_price(100, 0, 0.05, 0.20, 1)
 
-    def test_negative_volatility_raises(self):
+    @staticmethod
+    def test_negative_volatility_raises():
         with pytest.raises(ValueError):
             put_price(100, 100, 0.05, -0.20, 1)
 
-    def test_negative_time_to_expiry_raises(self):
+    @staticmethod
+    def test_negative_time_to_expiry_raises():
         with pytest.raises(ValueError):
             put_price(100, 100, 0.05, 0.20, -1)
 
 
 class TestDividendYield:
-    def test_default_dividend_yield_is_zero(self):
+    @staticmethod
+    def test_default_dividend_yield_is_zero():
         with_default = call_price(100, 100, 0.05, 0.20, 1)
         explicit_zero = call_price(100, 100, 0.05, 0.20, 1, 0.0)
         assert with_default == pytest.approx(explicit_zero, rel=1e-12)
 
-    def test_higher_dividend_yield_lowers_call_price(self):
+    @staticmethod
+    def test_higher_dividend_yield_lowers_call_price():
         low_q = call_price(100, 100, 0.05, 0.20, 1, 0.0)
         high_q = call_price(100, 100, 0.05, 0.20, 1, 0.05)
         assert high_q < low_q
 
-    def test_higher_dividend_yield_raises_put_price(self):
+    @staticmethod
+    def test_higher_dividend_yield_raises_put_price():
         low_q = put_price(100, 100, 0.05, 0.20, 1, 0.0)
         high_q = put_price(100, 100, 0.05, 0.20, 1, 0.05)
         assert high_q > low_q
 
 
 class TestBroadcasting:
-    def test_call_price_accepts_array_stock_price(self):
+    @staticmethod
+    def test_call_price_accepts_array_stock_price():
         stock_prices = np.array([80.0, 90.0, 100.0, 110.0, 120.0])
         prices = call_price(stock_prices, 100, 0.05, 0.20, 1)
 
         assert isinstance(prices, np.ndarray)
         assert prices.shape == stock_prices.shape
-
-    def test_call_price_array_matches_scalar_elementwise(self):
+    def test_call_price_array_matches_scalar_elementwise():
         stock_prices = np.array([80.0, 100.0, 120.0])
         array_result = call_price(stock_prices, 100, 0.05, 0.20, 1)
 
@@ -185,7 +210,8 @@ class TestBroadcasting:
 
         np.testing.assert_allclose(array_result, scalar_results, rtol=1e-10)
 
-    def test_put_price_accepts_array_strike_price(self):
+    @staticmethod
+    def test_put_price_accepts_array_strike_price():
         stock_prices = np.array([100.0, 100.0, 100.0, 100.0, 100.0])
         strike_prices = np.array([80.0, 90.0, 100.0, 110.0, 120.0])
 
@@ -200,7 +226,8 @@ class TestBroadcasting:
         assert isinstance(prices, np.ndarray)
         assert prices.shape == strike_prices.shape
 
-    def test_fully_broadcast_multi_parameter_arrays(self):
+    @staticmethod
+    def test_fully_broadcast_multi_parameter_arrays():
         stock_prices = np.array([90.0, 100.0, 110.0])
         volatilities = np.array([0.15, 0.20, 0.25])
 
@@ -209,7 +236,8 @@ class TestBroadcasting:
         assert prices.shape == (3,)
         assert np.all(np.isfinite(prices))
 
-    def test_mixed_scalar_and_array_time_to_expiry(self):
+    @staticmethod
+    def test_mixed_scalar_and_array_time_to_expiry():
         stock_prices = np.array([100.0, 100.0, 100.0])
         times = np.array([0.0, 0.5, 1.0])
 
@@ -226,52 +254,64 @@ class TestBroadcasting:
 
 
 class TestSanityBounds:
-    def test_call_price_non_negative(self):
+    @staticmethod
+    def test_call_price_non_negative():
         price = call_price(100, 100, 0.05, 0.20, 1)
         assert price >= 0.0
 
-    def test_put_price_non_negative(self):
+    @staticmethod
+    def test_put_price_non_negative():
         price = put_price(100, 100, 0.05, 0.20, 1)
         assert price >= 0.0
 
-    def test_deep_itm_call_approaches_intrinsic(self):
+    @staticmethod
+    def test_deep_itm_call_approaches_intrinsic():
         price = call_price(150, 100, 0.05, 0.01, 0.001)
         assert price == pytest.approx(50.0, rel=1e-2)
 
-    def test_deep_otm_call_near_zero(self):
+    @staticmethod
+    def test_deep_otm_call_near_zero():
         price = call_price(50, 100, 0.05, 0.10, 0.1)
         assert price == pytest.approx(0.0, abs=1e-3)
 
-    def test_deep_itm_put_approaches_intrinsic(self):
+    @staticmethod
+    def test_deep_itm_put_approaches_intrinsic():
         price = put_price(50, 100, 0.05, 0.01, 0.001)
         assert price == pytest.approx(50.0, rel=1e-2)
 
-    def test_call_price_bounded_above_by_stock_price(self):
+    @staticmethod
+    def test_call_price_bounded_above_by_stock_price():
         price = call_price(100, 100, 0.05, 0.20, 1)
         assert price <= 100.0
 
-    def test_put_price_bounded_above_by_discounted_strike(self):
+    @staticmethod
+    def test_put_price_bounded_above_by_discounted_strike():
         price = put_price(100, 100, 0.05, 0.20, 1)
         assert price <= 100 * np.exp(-0.05 * 1)
 
 
 class TestMonotonicity:
-    def test_call_price_increases_with_stock_price(self):
+    @staticmethod
+    def test_call_price_increases_with_stock_price():
         prices = [call_price(s, 100, 0.05, 0.20, 1) for s in [80, 90, 100, 110, 120]]
         assert prices == sorted(prices)
 
-    def test_put_price_decreases_with_stock_price(self):
+    @staticmethod
+    def test_put_price_decreases_with_stock_price():
         prices = [put_price(s, 100, 0.05, 0.20, 1) for s in [80, 90, 100, 110, 120]]
         assert prices == sorted(prices, reverse=True)
 
-    def test_call_price_increases_with_volatility(self):
+    @staticmethod
+    def test_call_price_increases_with_volatility():
         prices = [call_price(100, 100, 0.05, sigma, 1) for sigma in [0.1, 0.2, 0.3, 0.4]]
         assert prices == sorted(prices)
 
-    def test_put_price_increases_with_volatility(self):
+    @staticmethod
+    def test_put_price_increases_with_volatility():
         prices = [put_price(100, 100, 0.05, sigma, 1) for sigma in [0.1, 0.2, 0.3, 0.4]]
         assert prices == sorted(prices)
 
-    def test_call_price_increases_with_time_to_expiry(self):
+    @staticmethod
+    def test_call_price_increases_with_time_to_expiry():
         prices = [call_price(100, 100, 0.05, 0.20, t) for t in [0.25, 0.5, 1.0, 2.0]]
         assert prices == sorted(prices)

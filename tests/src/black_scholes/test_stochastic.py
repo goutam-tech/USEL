@@ -19,15 +19,18 @@ from usel.black_scholes.stochastic import (
 
 
 class TestSimulateGbmTerminal:
-    def test_output_shape(self):
+    @staticmethod
+    def test_output_shape():
         terminal = simulate_gbm_terminal(100, 0.05, 0.20, 1, num_paths=10_000, random_seed=0)
         assert terminal.shape == (10_000,)
 
-    def test_all_prices_positive(self):
+    @staticmethod
+    def test_all_prices_positive():
         terminal = simulate_gbm_terminal(100, 0.05, 0.20, 1, num_paths=10_000, random_seed=0)
         assert np.all(terminal > 0.0)
 
-    def test_mean_matches_risk_neutral_expectation(self):
+    @staticmethod
+    def test_mean_matches_risk_neutral_expectation():
         stock_price, risk_free_rate, volatility, time_to_expiry = 100, 0.05, 0.20, 1
         terminal = simulate_gbm_terminal(
             stock_price,
@@ -40,7 +43,8 @@ class TestSimulateGbmTerminal:
         expected_mean = stock_price * np.exp(risk_free_rate * time_to_expiry)
         assert np.mean(terminal) == pytest.approx(expected_mean, rel=1e-2)
 
-    def test_mean_reflects_dividend_yield(self):
+    @staticmethod
+    def test_mean_reflects_dividend_yield():
         stock_price, risk_free_rate, volatility, time_to_expiry, q = (
             100,
             0.05,
@@ -60,21 +64,25 @@ class TestSimulateGbmTerminal:
         expected_mean = stock_price * np.exp((risk_free_rate - q) * time_to_expiry)
         assert np.mean(terminal) == pytest.approx(expected_mean, rel=1e-2)
 
-    def test_reproducible_with_same_seed(self):
+    @staticmethod
+    def test_reproducible_with_same_seed():
         first = simulate_gbm_terminal(100, 0.05, 0.20, 1, num_paths=1000, random_seed=7)
         second = simulate_gbm_terminal(100, 0.05, 0.20, 1, num_paths=1000, random_seed=7)
         np.testing.assert_array_equal(first, second)
 
-    def test_different_seeds_give_different_results(self):
+    @staticmethod
+    def test_different_seeds_give_different_results():
         first = simulate_gbm_terminal(100, 0.05, 0.20, 1, num_paths=1000, random_seed=1)
         second = simulate_gbm_terminal(100, 0.05, 0.20, 1, num_paths=1000, random_seed=2)
         assert not np.array_equal(first, second)
 
-    def test_zero_time_to_expiry_returns_constant(self):
+    @staticmethod
+    def test_zero_time_to_expiry_returns_constant():
         terminal = simulate_gbm_terminal(100, 0.05, 0.20, 0, num_paths=1000, random_seed=0)
         np.testing.assert_allclose(terminal, np.full(1000, 100.0))
 
-    def test_antithetic_pairs_present(self):
+    @staticmethod
+    def test_antithetic_pairs_present():
         terminal = simulate_gbm_terminal(
             100, 0.05, 0.20, 1, num_paths=1000, antithetic=True, random_seed=3
         )
@@ -85,37 +93,45 @@ class TestSimulateGbmTerminal:
         diffusion_second = log_returns[half:] - drift
         np.testing.assert_allclose(diffusion_first, -diffusion_second, atol=1e-10)
 
-    def test_negative_stock_price_raises(self):
+    @staticmethod
+    def test_negative_stock_price_raises():
         with pytest.raises(ValueError):
             simulate_gbm_terminal(-100, 0.05, 0.20, 1)
 
-    def test_negative_volatility_raises(self):
+    @staticmethod
+    def test_negative_volatility_raises():
         with pytest.raises(ValueError):
             simulate_gbm_terminal(100, 0.05, -0.20, 1)
 
-    def test_negative_time_to_expiry_raises(self):
+    @staticmethod
+    def test_negative_time_to_expiry_raises():
         with pytest.raises(ValueError):
             simulate_gbm_terminal(100, 0.05, 0.20, -1)
 
-    def test_too_few_paths_raises(self):
+    @staticmethod
+    def test_too_few_paths_raises():
         with pytest.raises(ValueError):
             simulate_gbm_terminal(100, 0.05, 0.20, 1, num_paths=1)
 
 
 class TestSimulateGbmPaths:
-    def test_output_shape(self):
+    @staticmethod
+    def test_output_shape():
         paths = simulate_gbm_paths(100, 0.05, 0.20, 1, num_paths=500, num_steps=50, random_seed=0)
         assert paths.shape == (500, 51)
 
-    def test_first_column_equals_initial_price(self):
+    @staticmethod
+    def test_first_column_equals_initial_price():
         paths = simulate_gbm_paths(100, 0.05, 0.20, 1, num_paths=500, num_steps=50, random_seed=0)
         np.testing.assert_allclose(paths[:, 0], np.full(500, 100.0))
 
-    def test_all_prices_positive(self):
+    @staticmethod
+    def test_all_prices_positive():
         paths = simulate_gbm_paths(100, 0.05, 0.20, 1, num_paths=500, num_steps=50, random_seed=0)
         assert np.all(paths > 0.0)
 
-    def test_terminal_column_mean_matches_expectation(self):
+    @staticmethod
+    def test_terminal_column_mean_matches_expectation():
         stock_price, risk_free_rate, volatility, time_to_expiry = 100, 0.05, 0.20, 1
         paths = simulate_gbm_paths(
             stock_price,
@@ -129,13 +145,15 @@ class TestSimulateGbmPaths:
         expected_mean = stock_price * np.exp(risk_free_rate * time_to_expiry)
         assert np.mean(paths[:, -1]) == pytest.approx(expected_mean, rel=2e-2)
 
-    def test_too_few_steps_raises(self):
+    @staticmethod
+    def test_too_few_steps_raises():
         with pytest.raises(ValueError):
             simulate_gbm_paths(100, 0.05, 0.20, 1, num_steps=0)
 
 
 class TestMonteCarloCallPrice:
-    def test_returns_named_tuple(self):
+    @staticmethod
+    def test_returns_named_tuple():
         result = monte_carlo_call_price(100, 100, 0.05, 0.20, 1, num_paths=10_000, random_seed=0)
         assert isinstance(result, MonteCarloResult)
 
@@ -147,8 +165,8 @@ class TestMonteCarloCallPrice:
             (120, 90, 0.01, 0.15, 2.0),
         ],
     )
+    @staticmethod
     def test_price_within_confidence_interval_of_analytical(
-        self,
         stock_price,
         strike_price,
         risk_free_rate,
@@ -173,22 +191,26 @@ class TestMonteCarloCallPrice:
         )
         assert result.conf_interval_lower <= analytical <= result.conf_interval_upper
 
-    def test_price_close_to_analytical_with_dividend_yield(self):
+    @staticmethod
+    def test_price_close_to_analytical_with_dividend_yield():
         analytical = call_price(100, 100, 0.05, 0.20, 1, 0.03)
         result = monte_carlo_call_price(
             100, 100, 0.05, 0.20, 1, 0.03, num_paths=200_000, random_seed=0
         )
         assert result.price == pytest.approx(analytical, abs=4 * result.std_error)
 
-    def test_std_error_positive(self):
+    @staticmethod
+    def test_std_error_positive():
         result = monte_carlo_call_price(100, 100, 0.05, 0.20, 1, num_paths=10_000, random_seed=0)
         assert result.std_error > 0.0
 
-    def test_conf_interval_brackets_price(self):
+    @staticmethod
+    def test_conf_interval_brackets_price():
         result = monte_carlo_call_price(100, 100, 0.05, 0.20, 1, num_paths=10_000, random_seed=0)
         assert result.conf_interval_lower < result.price < result.conf_interval_upper
 
-    def test_num_paths_reported_correctly(self):
+    @staticmethod
+    def test_num_paths_reported_correctly():
         result = monte_carlo_call_price(100, 100, 0.05, 0.20, 1, num_paths=12_345, random_seed=0)
         assert result.num_paths == 12_345
 
@@ -202,8 +224,8 @@ class TestMonteCarloPutPrice:
             (120, 90, 0.01, 0.15, 2.0),
         ],
     )
+    @staticmethod
     def test_price_within_confidence_interval_of_analytical(
-        self,
         stock_price,
         strike_price,
         risk_free_rate,
@@ -230,25 +252,29 @@ class TestMonteCarloPutPrice:
 
 
 class TestMonteCarloPriceDispatcher:
-    def test_dispatches_to_call(self):
+    @staticmethod
+    def test_dispatches_to_call():
         analytical = call_price(100, 100, 0.05, 0.20, 1)
         result = monte_carlo_price(
             "call", 100, 100, 0.05, 0.20, 1, num_paths=200_000, random_seed=0
         )
         assert result.conf_interval_lower <= analytical <= result.conf_interval_upper
 
-    def test_dispatches_to_put(self):
+    @staticmethod
+    def test_dispatches_to_put():
         analytical = put_price(100, 100, 0.05, 0.20, 1)
         result = monte_carlo_price("put", 100, 100, 0.05, 0.20, 1, num_paths=200_000, random_seed=0)
         assert result.conf_interval_lower <= analytical <= result.conf_interval_upper
 
-    def test_invalid_option_type_raises(self):
+    @staticmethod
+    def test_invalid_option_type_raises():
         with pytest.raises(ValueError):
             monte_carlo_price("straddle", 100, 100, 0.05, 0.20, 1)
 
 
 class TestAntitheticVarianceReduction:
-    def test_antithetic_reduces_std_error(self):
+    @staticmethod
+    def test_antithetic_reduces_std_error():
         with_antithetic = monte_carlo_call_price(
             100,
             100,
@@ -273,52 +299,62 @@ class TestAntitheticVarianceReduction:
 
 
 class TestConvergence:
-    def test_std_error_shrinks_with_more_paths(self):
+    @staticmethod
+    def test_std_error_shrinks_with_more_paths():
         small = monte_carlo_call_price(100, 100, 0.05, 0.20, 1, num_paths=1_000, random_seed=0)
         large = monte_carlo_call_price(100, 100, 0.05, 0.20, 1, num_paths=100_000, random_seed=0)
         assert large.std_error < small.std_error
 
-    def test_price_converges_to_analytical_with_many_paths(self):
+    @staticmethod
+    def test_price_converges_to_analytical_with_many_paths():
         analytical = call_price(100, 100, 0.05, 0.20, 1)
         result = monte_carlo_call_price(100, 100, 0.05, 0.20, 1, num_paths=500_000, random_seed=0)
         assert result.price == pytest.approx(analytical, abs=0.05)
 
 
 class TestZeroTimeToExpiry:
-    def test_call_price_equals_intrinsic(self):
+    @staticmethod
+    def test_call_price_equals_intrinsic():
         result = monte_carlo_call_price(110, 100, 0.05, 0.20, 0, num_paths=1000)
         assert result.price == pytest.approx(10.0, abs=1e-8)
         assert result.std_error == pytest.approx(0.0, abs=1e-8)
 
-    def test_put_price_equals_intrinsic(self):
+    @staticmethod
+    def test_put_price_equals_intrinsic():
         result = monte_carlo_put_price(90, 100, 0.05, 0.20, 0, num_paths=1000)
         assert result.price == pytest.approx(10.0, abs=1e-8)
 
 
 class TestValidation:
-    def test_negative_stock_price_raises(self):
+    @staticmethod
+    def test_negative_stock_price_raises():
         with pytest.raises(ValueError):
             monte_carlo_call_price(-100, 100, 0.05, 0.20, 1)
 
-    def test_zero_strike_price_raises(self):
+    @staticmethod
+    def test_zero_strike_price_raises():
         with pytest.raises(ValueError):
             monte_carlo_call_price(100, 0, 0.05, 0.20, 1)
 
-    def test_negative_time_to_expiry_raises(self):
+    @staticmethod
+    def test_negative_time_to_expiry_raises():
         with pytest.raises(ValueError):
             monte_carlo_call_price(100, 100, 0.05, 0.20, -1)
 
-    def test_invalid_confidence_level_raises(self):
+    @staticmethod
+    def test_invalid_confidence_level_raises():
         with pytest.raises(ValueError):
             monte_carlo_call_price(100, 100, 0.05, 0.20, 1, confidence_level=1.5)
 
-    def test_zero_confidence_level_raises(self):
+    @staticmethod
+    def test_zero_confidence_level_raises():
         with pytest.raises(ValueError):
             monte_carlo_call_price(100, 100, 0.05, 0.20, 1, confidence_level=0.0)
 
 
 class TestMonteCarloPutCallParity:
-    def test_parity_holds_within_combined_uncertainty(self):
+    @staticmethod
+    def test_parity_holds_within_combined_uncertainty():
         stock_price, strike_price, risk_free_rate, volatility, time_to_expiry = (
             100,
             100,
