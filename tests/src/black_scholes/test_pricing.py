@@ -203,7 +203,7 @@ class TestBroadcasting:
         assert isinstance(prices, np.ndarray)
         assert prices.shape == stock_prices.shape
 
-    def test_call_price_array_matches_scalar_elementwise():
+    def test_call_price_array_matches_scalar_elementwise(self):
         stock_prices = np.array([80.0, 100.0, 120.0])
         array_result = call_price(stock_prices, 100, 0.05, 0.20, 1)
 
