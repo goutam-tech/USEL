@@ -52,13 +52,6 @@ class TestPdeResidual:
         assert residual == pytest.approx(0.0, abs=1e-8)
 
     @pytest.mark.parametrize(
-        "stock_price,strike_price,risk_free_rate,volatility,time_to_expiry,dividend_yield",
-        [
-            (100, 100, 0.05, 0.20, 1.0, 0.0),
-            (80, 100, 0.03, 0.35, 0.5, 0.0),
-        ],
-    )
-    @pytest.mark.parametrize(
         "stock_price, strike_price, risk_free_rate, volatility, time_to_expiry, dividend_yield",
         [
             (100, 100, 0.05, 0.20, 1, 0.0),
