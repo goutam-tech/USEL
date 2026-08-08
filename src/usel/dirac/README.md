@@ -1,55 +1,78 @@
 # Dirac Equation Module
 
-Numerical solvers for the 1D Dirac equation in relativistic quantum mechanics, with spinor algebra and Pauli/Dirac matrix definitions.
+The Dirac module is a relativistic quantum mechanics component of **USEL
+(Universal Scientific Engine Library)**.
+
+It provides numerical solvers for the 1D Dirac equation, with spinor
+algebra and Pauli/Dirac matrix definitions. The module is designed for
+CPU-based scientific computing and works efficiently on standard consumer
+hardware without GPU requirements.
+
+---
 
 ## Overview
 
-The Dirac equation describes relativistic spin-½ particles:
+The module provides reusable components for relativistic quantum
+simulations:
 
-```
-iℏ ∂ψ/∂t = H_D ψ
-```
-
-where the Dirac Hamiltonian is:
-
-```
-H_D = c α·p + β m c² + V(x)
-```
-
-This module provides:
-
-- **Free-particle** plane-wave spinor evolution
-- **Spatial** Dirac wave-packet propagation
+- Free-particle plane-wave spinor evolution
+- Spatial Dirac wave-packet propagation
 - Complete Pauli and Dirac matrix library
 - Spinor normalisation and expectation values
 
-# Quick Start
+The architecture is designed to support future extensions in relativistic
+and computational physics research.
 
-Refer the examples [Some examples](example\dirac)
-```
+---
 
-## API Reference
+## Mathematical Foundation
 
-### `DiracSolver`
+The module is based on the time-dependent Dirac equation:
 
-**Constructor:**
+\[
+i\hbar\frac{\partial\psi}{\partial t}=H_D\psi
+\]
+
+where the Dirac Hamiltonian is:
+
+\[
+H_D = c\,\boldsymbol{\alpha}\cdot\mathbf{p} + \beta m c^2 + V(x)
+\]
+
+- `ψ` represents the two-component spinor wavefunction
+- `α`, `β` represent the Dirac matrices
+- `c` represents the speed of light
+- `m` represents the particle mass
+- `V(x)` represents the scalar potential
+
+---
+
+## Features
+
+### Quantum State Management
+
+Provides utilities for:
+
+- Two-component spinor construction
+- Spinor normalisation (spatial or internal)
+- Probability density calculation per component
+
+### Solvers
+
+Provides the `DiracSolver` class:
+
 ```python
 DiracSolver(x, potential=None, mass=1.0, c=1.0, hbar=1.0)
 ```
-- `x` — 1D spatial grid
-- `potential` — Scalar potential V(x) (default: free particle)
-- `mass` — Particle mass
-- `c` — Speed of light
-- `hbar` — Reduced Planck constant
-
-**Methods:**
 
 | Method | Description |
 |--------|-------------|
 | `solve(psi0, t_end, dt)` | Evolve 2-component spatial spinor via matrix exponential |
 | `solve_plane_wave(momentum, t_end, dt, spin_up)` | Free-particle plane-wave evolution |
 
-### `DiracResult`
+### Results
+
+The `DiracResult` object returned by the solver:
 
 | Field | Description |
 |-------|-------------|
@@ -62,7 +85,7 @@ DiracSolver(x, potential=None, mass=1.0, c=1.0, hbar=1.0)
 
 **Properties:** `total_probability`, `upper_component`, `lower_component`
 
-## Pauli and Dirac Matrices
+### Pauli and Dirac Matrices
 
 ```python
 from usel.dirac import PAULI_X, PAULI_Y, PAULI_Z, PAULI_I
@@ -77,7 +100,7 @@ from usel.dirac import gamma_matrices_dirac, dirac_alpha_matrices, dirac_beta
 | `dirac_alpha_matrices()` | Returns (α₁, α₂, α₃) |
 | `dirac_beta()` | β = γ⁰ matrix |
 
-## Spinor Utilities
+### Spinor Utilities
 
 ```python
 from usel.dirac import normalise_spinor, spin_expectation
@@ -86,22 +109,134 @@ from usel.dirac import normalise_spinor, spin_expectation
 - `normalise_spinor(spinor, dx)` — Normalise spatial or internal spinor
 - `spin_expectation(spinor, pauli)` — Compute ⟨ψ|σ|ψ⟩
 
-## Numerical Method
+### Numerical Method
 
 The solver uses the **matrix exponential** propagator:
 
+\[
+\psi(t + dt) = \exp(-iH\,dt/\hbar)\,\psi(t)
+\]
+
+computed via `scipy.linalg.expm` for the full 2N × 2N Dirac Hamiltonian on
+the finite-difference grid.
+
+---
+
+## Module Structure
+
+```text
+dirac/
+
+├── solver.py
+├── matrices.py
+├── spinors.py
+├── propagators.py
+├── validation.py
 ```
-ψ(t + dt) = exp(-i H dt / ℏ) ψ(t)
+
+---
+
+## Example
+
+Run the free-particle example:
+
+```bash
+uv run example/dirac/example_free_particle.py
 ```
 
-computed via `scipy.linalg.expm` for the full 2N × 2N Dirac Hamiltonian on the finite-difference grid.
+---
 
-## Examples
+## Development
 
-See `examples/example_9_dirac_free_particle.py`.
+Install dependencies:
+
+```bash
+uv sync --group dev
+```
+
+Run tests:
+
+```bash
+uv run pytest
+```
+
+Run quality checks:
+
+```bash
+uv run ruff check .
+uv run black --check .
+uv run mypy src
+```
+
+---
+
+## Testing
+
+The Dirac module includes tests for:
+
+- Matrix definitions (Pauli, Dirac, gamma matrices)
+- Spinor normalisation and expectation values
+- Plane-wave and spatial propagation
+- Energy spectrum and spin conservation
+
+Run:
+
+```bash
+uv run pytest tests/test_dirac
+```
+
+---
+
+## Hardware Requirements
+
+Minimum:
+
+- CPU-based system
+- 4 GB RAM
+
+Recommended:
+
+- Multi-core processor
+- 8 GB RAM
+
+GPU acceleration is not required.
+
+---
 
 ## Validation
 
 - **Free particle:** energy matches `E = √((pc)² + (mc²)²)`
 - **Plane wave:** spin is conserved under free evolution
 - **Spinor norm:** preserved under unitary propagation
+
+---
+
+## Future Development
+
+Planned improvements:
+
+- 2D and 3D relativistic wave-packet simulations
+- Coupling to external electromagnetic fields
+- Klein-Gordon equation module
+- Research-oriented relativistic scattering workflows
+
+---
+
+## Contributing
+
+Contributions are welcome.
+
+Please ensure:
+
+- Code follows PEP 8 standards
+- Tests are added for new features
+- Documentation is updated
+- CI checks pass successfully
+
+---
+
+## License
+
+Part of the **USEL (Universal Scientific Engine Library)** project.
+
+Licensed under the MIT License.

@@ -175,7 +175,7 @@ schrodinger/
 Run the Schrödinger particle-in-box example:
 
 ```bash
-uv run examples/example_6_schrodinger_particle_in_box.py
+uv run example/schrodinger/example_particle_in_box.py
 ```
 
 Example output:

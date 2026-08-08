@@ -1,4 +1,4 @@
-# maxwell — API Reference
+# Maxwell — API Reference
 
 A Python library (SymPy for symbolic math, NumPy/SciPy for numerics) for
 building electromagnetic fields and checking them against every form of

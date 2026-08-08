@@ -10,3 +10,6 @@ wheels/
 .venv
 uv.lock
 .python-version
+.vscode
+.vs
+USEL.pyproj
