@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "usel"
-version = "1.0.7"
+version = "1.0.8"
 description = "An open-source, CPU-only scientific computing framework focused on quantum physics simulations and numerical methods."
 
 authors = [

@@ -1,0 +1,1954 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>USEL - Scientific Computing</title>
+  <meta name="description"
+    content="A restrained, CPU-native numerical framework for computational physics, continuous wave mechanics, and deterministic spectral simulation." />
+  <meta property="og:title" content="USEL - Scientific Computing" />
+  <meta property="og:description"
+    content="A restrained, CPU-native numerical framework for computational physics, continuous wave mechanics, and deterministic spectral simulation." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- Google Fonts: Inter, JetBrains Mono, Material Symbols -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    rel="stylesheet" />
+
+  <!-- Tailwind CSS Engine -->
+  <link rel="stylesheet" href="main.css" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            "surface-0": "#FFFFFF",
+            "surface-1": "#F8FAFC",
+            "surface-2": "#F1F5F9",
+            "surface-3": "#E2E8F0",
+            "border-hairline": "#E2E8F0",
+            "border-subtle": "#CBD5E1",
+            "border-focus": "rgba(21, 128, 61, 0.4)",
+            accent: "#15803D",
+            "accent-hover": "#166534",
+            "accent-lime": "#22C55E",
+            "accent-muted": "#DCFCE7",
+            "text-primary": "#0A0A0A",
+            "text-secondary": "#18181B",
+            "text-muted": "#64748B",
+            "text-subtle": "#94A3B8",
+            /* Retarget the stock Tailwind "emerald" scale to the DESIGN.md
+             green system, since the markup below uses emerald-* utilities
+             directly and those must resolve to the design tokens. */
+            emerald: {
+              50: "#F0FDF4",
+              100: "#DCFCE7",
+              200: "#BBF7D0",
+              300: "#86EFAC",
+              400: "#4ADE80",
+              500: "#22C55E",
+              600: "#16A34A",
+              700: "#15803D",
+              800: "#166534",
+              900: "#14532D",
+              950: "#052E16",
+            },
+            zinc: {
+              950: "#0A0A0A",
+            },
+          },
+          fontFamily: {
+            sans: ["Inter", "sans-serif"],
+            mono: ["JetBrains Mono", "monospace"],
+            display: ["Geist", "Inter", "sans-serif"],
+          },
+          maxWidth: {
+            content: "1220px",
+          },
+        },
+      },
+    };
+  </script>
+</head>
+
+<body
+  class="bg-surface-0 text-text-primary antialiased selection:bg-accent selection:text-white min-h-screen flex flex-col">
+  Original chibi mascot sprite (line-art, brand palette only) — reused via <use> everywhere below
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <defs>
+        <symbol id="usel-mascot-full" viewBox="0 0 200 220">
+          <ellipse cx="100" cy="206" rx="52" ry="7" fill="#0A0A0A" opacity="0.07" />
+          <path d="M56 176c10 16 78 16 88 0" fill="none" stroke="#0A0A0A" stroke-width="3" stroke-linecap="round" />
+          <path d="M52 179c-8 4-8 13 2 15M148 179c8 4 8 13-2 15" fill="none" stroke="#0A0A0A" stroke-width="3"
+            stroke-linecap="round" />
+          <path d="M45 122c0-30 24-41 55-41s55 11 55 41v43c0 8-6 14-14 14H59c-8 0-14-6-14-14z" fill="#15803D" />
+          <path d="M50 131c-14 6-18 22-9 34" fill="none" stroke="#15803D" stroke-width="14" stroke-linecap="round" />
+          <path d="M150 131c14 6 18 22 9 34" fill="none" stroke="#15803D" stroke-width="14" stroke-linecap="round" />
+          <circle cx="100" cy="150" r="12" fill="#FFFFFF" />
+          <text x="100" y="155" font-family="'JetBrains Mono',monospace" font-size="14" font-weight="700" fill="#15803D"
+            text-anchor="middle">
+            ψ
+          </text>
+          <rect x="70" y="150" width="60" height="38" rx="4" fill="#0A0A0A" />
+          <rect x="74" y="154" width="52" height="26" rx="2" fill="#F1F5F9" />
+          <rect x="79" y="159" width="20" height="3" fill="#15803D" />
+          <rect x="79" y="165" width="30" height="3" fill="#CBD5E1" />
+          <rect x="79" y="171" width="24" height="3" fill="#CBD5E1" />
+          <circle cx="100" cy="70" r="42" fill="#FFFFFF" stroke="#0A0A0A" stroke-width="3" />
+          <path d="M58 60a42 42 0 0 1 84 0c0 4-2 8-6 8H64c-4 0-6-4-6-8z" fill="#15803D" />
+          <path d="M60 62a40 40 0 0 1 80 0" fill="none" stroke="#0A0A0A" stroke-width="6" stroke-linecap="round" />
+          <circle cx="58" cy="70" r="11" fill="#0A0A0A" />
+          <circle cx="142" cy="70" r="11" fill="#0A0A0A" />
+          <circle cx="58" cy="70" r="5" fill="#15803D" />
+          <circle cx="142" cy="70" r="5" fill="#15803D" />
+          <circle cx="86" cy="72" r="4.5" fill="#0A0A0A" />
+          <circle cx="114" cy="72" r="4.5" fill="#0A0A0A" />
+          <path d="M88 88q12 8 24 0" fill="none" stroke="#0A0A0A" stroke-width="3" stroke-linecap="round" />
+        </symbol>
+        <symbol id="usel-mascot-bust" viewBox="0 0 120 120">
+          <circle cx="60" cy="56" r="38" fill="#FFFFFF" stroke="#0A0A0A" stroke-width="3" />
+          <path d="M23 49a37 37 0 0 1 74 0c0 3-2 6-5 6H28c-3 0-5-3-5-6z" fill="#15803D" />
+          <path d="M24 50a36 36 0 0 1 72 0" fill="none" stroke="#0A0A0A" stroke-width="5" stroke-linecap="round" />
+          <circle cx="22" cy="57" r="10" fill="#0A0A0A" />
+          <circle cx="98" cy="57" r="10" fill="#0A0A0A" />
+          <circle cx="22" cy="57" r="4.5" fill="#15803D" />
+          <circle cx="98" cy="57" r="4.5" fill="#15803D" />
+          <circle cx="47" cy="60" r="4" fill="#0A0A0A" />
+          <circle cx="73" cy="60" r="4" fill="#0A0A0A" />
+          <path d="M49 76q11 7 22 0" fill="none" stroke="#0A0A0A" stroke-width="2.5" stroke-linecap="round" />
+          <path d="M18 108c0-20 18-27 42-27s42 7 42 27" fill="#15803D" />
+          <circle cx="60" cy="99" r="8" fill="#FFFFFF" />
+          <text x="60" y="103" font-family="'JetBrains Mono',monospace" font-size="10" font-weight="700" fill="#15803D"
+            text-anchor="middle">
+            ψ
+          </text>
+        </symbol>
+      </defs>
+    </svg>
+
+    <!-- TOP APP HEADER -->
+    <header id="app-header"
+      class="fixed top-0 left-0 right-0 z-50 bg-white/85 backdrop-blur-md border-b border-slate-200/80 h-14">
+      <div class="max-w-content mx-auto h-full px-4 sm:px-6 flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <a id="header-logo-link" class="flex items-center gap-2.5 group" href="#">
+            <div
+              class="w-6 h-6 rounded-md bg-emerald-50 border border-emerald-200 flex items-center justify-center font-mono text-xs font-semibold text-accent group-hover:bg-emerald-100 transition-colors">
+              ψ
+            </div>
+            <span class="font-mono text-sm tracking-widest font-bold text-zinc-950 uppercase">USEL</span>
+          </a>
+          <span
+            class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-slate-100 border border-slate-200 text-[11px] font-mono text-zinc-600">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span>
+            v1.0.0-cpu
+          </span>
+          <!-- SIMD Core Pill in Nav -->
+          <span
+            class="hidden lg:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-[10px] font-mono text-emerald-800 font-medium">
+            <span class="material-symbols-outlined text-[12px] text-emerald-600">bolt</span>
+            SIMD-CORE
+          </span>
+        </div>
+
+        <nav id="desktop-nav"
+          class="hidden md:flex items-center gap-6 text-xs text-zinc-600 font-mono tracking-tight font-medium">
+          <a class="hover:text-black transition-colors" href="#pipeline">PIPELINE</a>
+          <a class="hover:text-black transition-colors" href="#discipline">DISCIPLINE</a>
+          <a class="hover:text-black transition-colors" href="#modules">NAMESPACES</a>
+          <a class="hover:text-black transition-colors" href="#code">SYNTAX</a>
+          <a class="hover:text-black transition-colors" href="#benchmarks">DIAGNOSTICS</a>
+          <a class="hover:text-black transition-colors" href="#roadmap">ROADMAP</a>
+        </nav>
+
+        <div class="flex items-center gap-3 font-mono text-xs">
+          <a id="github-link-btn"
+            class="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 border border-slate-200 hover:border-slate-400 transition-all text-zinc-800 font-medium shadow-sm"
+            href="https://github.com/goutam-tech/USEL" rel="noreferrer" target="_blank">
+            <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+              <path
+                d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z">
+              </path>
+            </svg>
+            <span>github</span>
+            <span class="text-emerald-700 font-bold text-[11px]">4</span>
+          </a>
+          <a id="get-usel-btn"
+            class="px-4 py-1.5 rounded-full bg-emerald-600 text-white font-semibold hover:bg-emerald-700 transition-colors shadow-sm"
+            href="#quickstart">
+            Get USEL
+          </a>
+          <!-- Mobile Menu Button -->
+          <button id="mobile-menu-btn"
+            class="md:hidden p-1.5 rounded-md border border-slate-200 text-zinc-700 hover:bg-slate-50"
+            aria-label="Toggle Navigation">
+            <span class="material-symbols-outlined text-lg">menu</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Dropdown Menu -->
+      <div id="mobile-menu"
+        class="hidden md:hidden flex-col bg-white border-b border-slate-200 px-4 py-3 space-y-2 font-mono text-xs text-zinc-700">
+        <a class="py-1 hover:text-emerald-700" href="#pipeline">PIPELINE</a>
+        <a class="py-1 hover:text-emerald-700" href="#discipline">DISCIPLINE</a>
+        <a class="py-1 hover:text-emerald-700" href="#modules">NAMESPACES</a>
+        <a class="py-1 hover:text-emerald-700" href="#code">SYNTAX</a>
+        <a class="py-1 hover:text-emerald-700" href="#benchmarks">DIAGNOSTICS</a>
+        <a class="py-1 hover:text-emerald-700" href="#roadmap">ROADMAP</a>
+        <a class="py-1 text-emerald-700 font-semibold" href="#quickstart">QUICKSTART</a>
+      </div>
+    </header>
+
+    <main class="flex-1 pt-14">
+      <!-- HERO SECTION -->
+      <section id="hero-section"
+        class="relative overflow-hidden border-b border-slate-200 pt-14 pb-16 px-4 sm:px-6 bg-gradient-to-b from-slate-50/70 to-white">
+        <div class="bg-grid absolute inset-0 z-0" aria-hidden="true"></div>
+        <div class="max-w-content mx-auto relative z-10">
+          <!-- Top Hero Grid -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center pb-8">
+            <div class="lg:col-span-7 flex flex-col items-start text-left">
+              <!-- Eyebrow Pill -->
+              <div
+                class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 mb-6 shadow-sm">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                <span class="font-mono text-xs text-emerald-800 tracking-wider font-semibold uppercase">Open-Source
+                  Scientific Computing • CPU-First</span>
+              </div>
+              <!-- Headline -->
+              <h1 class="text-4xl sm:text-6xl font-bold tracking-tight text-zinc-950 leading-[1.08]">
+                Scientific computing.<br />
+                <span class="text-emerald-600">Built for physics.</span>
+              </h1>
+              <!-- Subtitle -->
+              <p class="mt-5 text-base sm:text-lg text-zinc-600 max-w-xl font-normal leading-relaxed">
+                USEL is a restrained, CPU-native numerical framework for
+                computational physics, continuous wave mechanics, and
+                deterministic spectral simulation.
+              </p>
+              <!-- CTAs -->
+              <div class="mt-8 flex flex-wrap items-center gap-3 font-mono text-xs">
+                <a id="hero-install-btn"
+                  class="px-5 py-2.5 rounded-full bg-emerald-600 text-white font-semibold hover:bg-emerald-700 transition-all flex items-center gap-2 shadow-sm"
+                  href="#quickstart">
+                  <span>INSTALL KERNEL</span>
+                  <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                </a>
+                <a id="hero-repo-btn"
+                  class="px-5 py-2.5 rounded-full bg-white border border-slate-200 text-zinc-800 hover:border-slate-400 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm"
+                  href="https://github.com/goutam-tech/USEL" rel="noreferrer" target="_blank">
+                  <span>SOURCE REPO</span>
+                  <span class="text-zinc-500 font-normal">• 4 ★</span>
+                </a>
+              </div>
+              <!-- Micro Hardware Baseline -->
+              <div class="mt-8 flex flex-wrap items-center gap-2 font-mono text-[11px] text-zinc-500">
+                <span
+                  class="px-2.5 py-1 rounded-md bg-white border border-slate-200 text-zinc-700 font-medium shadow-sm">AVX-512
+                  / AVX2 / NEON</span>
+                <span class="text-slate-300">/</span>
+                <span
+                  class="px-2.5 py-1 rounded-md bg-white border border-slate-200 text-zinc-700 font-medium shadow-sm">8
+                  GB RAM BASELINE</span>
+                <span class="text-slate-300">/</span>
+                <span
+                  class="px-2.5 py-1 rounded-md bg-white border border-slate-200 text-zinc-700 font-medium shadow-sm">DETERMINISTIC
+                  SEEDING</span>
+                <span class="text-slate-300">/</span>
+                <span
+                  class="px-2.5 py-1 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 font-semibold shadow-sm">MIT
+                  PERMISSIVE</span>
+              </div>
+            </div>
+
+            <!-- Mascot Hero Showcase Card -->
+            <div class="lg:col-span-5 flex justify-center lg:justify-end">
+              <div
+                class="relative w-full max-w-sm rounded-2xl bg-white border border-slate-200 p-4 shadow-sm hover:shadow-md transition-shadow">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-100 font-mono text-xs">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    <span class="font-bold text-zinc-900 tracking-wide">PROJECT MASCOT</span>
+                  </div>
+                  <span
+                    class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 text-[10px] font-semibold border border-emerald-200">CHIBI
+                    STUDY EDITION</span>
+                </div>
+                <div
+                  class="relative mt-3 rounded-xl overflow-hidden bg-gradient-to-b from-slate-50/70 to-slate-100/60 border border-slate-200/60 flex items-center justify-center p-3 group">
+                  <img id="hero-mascot-img" alt="Chibi study mascot with headphones at desk taking notes"
+                    class="w-full h-64 object-contain drop-shadow-sm group-hover:scale-105 transition-transform duration-300"
+                    src="public/itachi.png" onerror="this.onerror=null; this.src='/assets/mascots/itachi.png';" />
+                  <div
+                    class="absolute top-2 left-2 px-2 py-1 rounded bg-white/90 backdrop-blur-sm border border-slate-200 text-[10px] font-mono text-zinc-700 font-semibold shadow-xs">
+                    lo-fi physics study
+                  </div>
+                  <div
+                    class="absolute bottom-2 right-2 px-2.5 py-1 rounded-full bg-zinc-950/80 backdrop-blur-sm text-white text-[10px] font-mono font-medium flex items-center gap-1.5 shadow-sm">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    Ready to Compute
+                  </div>
+                </div>
+                <div class="mt-3 pt-2 flex items-center justify-between font-mono text-[11px] text-zinc-500">
+                  <span>STATUS:
+                    <strong class="text-zinc-900 font-medium">Studying Harmonics</strong></span>
+                  <span class="text-emerald-700 font-semibold">100% Focused</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TELEMETRY / INSTRUMENT HUD CONSOLE (With Live JavaScript Wave Simulator) -->
+          <div id="telemetry-hud"
+            class="w-full mt-4 rounded-xl bg-white border border-slate-200 text-left overflow-hidden shadow-sm">
+            <!-- Console Top Bar -->
+            <div
+              class="px-4 py-3 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2 font-mono text-xs">
+              <div class="flex items-center gap-2.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span class="text-zinc-950 font-bold tracking-wider">ψ(x, t) CONTINUOUS EVOLUTION SIMULATOR</span>
+                <span
+                  class="px-1.5 py-0.5 rounded bg-white text-[10px] text-zinc-600 border border-slate-200 font-medium">DEV-NODE
+                  01</span>
+              </div>
+              <div class="flex items-center gap-4 text-[11px] text-zinc-600">
+                <span>SOLVER:
+                  <span class="text-zinc-900 font-semibold">CRANK-NICOLSON</span></span>
+                <span>SPECTRAL GRID:
+                  <span class="text-zinc-900 font-semibold">1024 FFT</span></span>
+                <span id="sim-status-indicator" class="text-emerald-700 font-bold">STATUS: DETERMINISTIC OK</span>
+                <div class="hidden md:flex items-center gap-2 pl-3 border-l border-slate-200">
+                  <img src="public/itachi.png" alt="Chibi mascot observing the simulation"
+                    class="w-7 h-7 object-contain drop-shadow-sm hover:scale-110 transition-transform" />
+                  <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">MASCOT
+                    OBSERVING</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Console Interior -->
+            <div class="p-4 sm:p-5 grid grid-cols-1 lg:grid-cols-12 gap-4 bg-white">
+              <!-- Left 8 cols: Interactive Canvas Waveform Visualizer -->
+              <div
+                class="lg:col-span-8 rounded-lg bg-slate-50/80 border border-slate-200 p-4 flex flex-col justify-between h-80 relative">
+                <div
+                  class="flex flex-wrap justify-between items-center gap-2 text-[11px] font-mono text-zinc-500 relative z-10">
+                  <span class="text-zinc-900 font-semibold flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                    |ψ(x)|² Probability Density Function
+                  </span>
+
+                  <!-- Simulation Controls Toolbar -->
+                  <div class="flex items-center gap-2">
+                    <select id="sim-mode-select"
+                      class="text-[11px] font-mono py-1 px-2 rounded bg-white border border-slate-200 text-zinc-700 cursor-pointer focus:outline-none focus:border-emerald-500">
+                      <option value="harmonic">Harmonic Trap V(x)</option>
+                      <option value="tunnel">Tunneling Barrier</option>
+                      <option value="free">Free Wavepacket</option>
+                    </select>
+
+                    <button id="sim-play-btn"
+                      class="px-2.5 py-1 rounded bg-white border border-slate-200 text-zinc-700 hover:bg-slate-100 text-[10px] font-bold flex items-center gap-1 transition-colors">
+                      <span id="sim-play-icon"
+                        class="material-symbols-outlined text-[13px] text-emerald-700">pause</span>
+                      <span id="sim-play-text">PAUSE</span>
+                    </button>
+
+                    <button id="sim-reset-btn"
+                      class="px-2 py-1 rounded bg-white border border-slate-200 text-zinc-600 hover:bg-slate-100 text-[10px] font-medium"
+                      title="Reset Phase">
+                      RESET
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Live Canvas Wave Animation -->
+                <div class="relative w-full flex-1 my-2 flex items-center justify-center overflow-hidden">
+                  <canvas id="wave-canvas" class="w-full h-44 cursor-crosshair"></canvas>
+                </div>
+
+                <!-- Simulation Footer HUD Telemetry -->
+                <div
+                  class="flex flex-wrap justify-between items-center gap-2 text-[11px] font-mono text-zinc-600 pt-2 border-t border-slate-200 relative z-10">
+                  <span>∫ |ψ(x)|² dx =
+                    <strong id="sim-norm-val" class="text-zinc-950 font-bold tabular-nums">1.00000000</strong></span>
+                  <span>POTENTIAL:
+                    <span id="sim-hamiltonian-label" class="text-zinc-900 font-medium">Harmonic Oscillator
+                      Trap</span></span>
+                  <span>HAMILTONIAN TRACE:
+                    <span id="sim-trace-val" class="text-emerald-700 font-bold tabular-nums">12.438 eV</span></span>
+                </div>
+              </div>
+
+              <!-- Right 4 cols: Exact Mathematical Metrics -->
+              <div class="lg:col-span-4 flex flex-col justify-between gap-2.5 font-mono text-xs">
+                <div class="rounded-lg bg-slate-50 border border-slate-200 p-3 shadow-2xs">
+                  <div class="flex items-center justify-between text-zinc-500 text-[11px] mb-2 font-medium">
+                    <span>SPECTRAL EIGENSYSTEM</span>
+                    <span class="text-emerald-700 flex items-center gap-1 font-bold">
+                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                      CONVERGED
+                    </span>
+                  </div>
+                  <div class="grid grid-cols-2 gap-2">
+                    <div class="p-2 rounded bg-white border border-slate-200">
+                      <div class="text-[10px] text-zinc-500">λ₀ (Ground)</div>
+                      <div id="sim-lambda0" class="text-sm font-bold text-emerald-700 mt-0.5 tabular-nums">
+                        3.000000
+                      </div>
+                    </div>
+                    <div class="p-2 rounded bg-white border border-slate-200">
+                      <div class="text-[10px] text-zinc-500">λ₁ (Excited)</div>
+                      <div id="sim-lambda1" class="text-sm font-bold text-zinc-950 mt-0.5 tabular-nums">
+                        1.000000
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex justify-between text-[10px] text-zinc-500 mt-2 pt-1 border-t border-slate-200">
+                    <span>Residual: ≤ 1e-16</span>
+                    <span>Iterations: 14</span>
+                  </div>
+                </div>
+
+                <div class="rounded-lg bg-slate-50 border border-slate-200 p-3 shadow-2xs">
+                  <div class="flex items-center justify-between text-zinc-500 text-[11px] mb-1 font-medium">
+                    <span>HAMILTONIAN FORM</span>
+                    <span class="text-zinc-700 font-mono font-medium">H = -∇²/2m + V(x)</span>
+                  </div>
+                  <div class="text-zinc-900 text-xs mt-1 font-medium">
+                    Continuous Wave Operator
+                  </div>
+                  <div class="flex justify-between text-[10px] text-zinc-500 mt-2 pt-1 border-t border-slate-200">
+                    <span>Sparsity:
+                      <strong class="text-zinc-800">99.1%</strong></span>
+                    <span>Tridiagonal:
+                      <strong class="text-zinc-800">Yes</strong></span>
+                  </div>
+                </div>
+
+                <div
+                  class="rounded-lg bg-slate-50 border border-slate-200 p-3 flex items-center justify-between shadow-2xs">
+                  <div>
+                    <div class="text-[10px] text-zinc-500 uppercase font-medium">
+                      Execution Target
+                    </div>
+                    <div class="text-xs font-bold text-zinc-950 mt-0.5">
+                      Host CPU Native
+                    </div>
+                  </div>
+                  <div class="text-right">
+                    <div class="text-[10px] text-zinc-500 uppercase font-medium">
+                      Resident RSS
+                    </div>
+                    <div class="text-xs font-bold text-emerald-700 mt-0.5 tabular-nums">
+                      38.4 MB
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 2: PIPELINE / FOUNDATION -->
+      <section id="pipeline" class="py-16 border-b border-slate-200 bg-slate-50/50 px-4 sm:px-6">
+        <div class="max-w-content mx-auto">
+          <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 pb-4 border-b border-slate-200">
+            <div>
+              <span class="text-emerald-700 font-mono text-xs uppercase tracking-widest font-bold">The Foundation</span>
+              <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 mt-1">
+                Algorithmic workflow pipeline.
+              </h2>
+            </div>
+            <p class="mt-2 md:mt-0 text-xs sm:text-sm text-zinc-600 font-mono max-w-md">
+              Linear algebra primitives composable into continuous
+              time-dependent simulations with zero memory overhead.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 font-mono text-xs">
+            <!-- Step 1 -->
+            <div id="pipe-card-1"
+              class="rounded-xl bg-white border border-slate-200 p-4 flex flex-col justify-between hover:border-slate-400 transition-all shadow-sm">
+              <div>
+                <div class="text-[10px] text-zinc-500 mb-1 font-semibold">
+                  01 / PRIMITIVES
+                </div>
+                <div class="font-bold text-zinc-950 text-sm">usel.math</div>
+                <p class="font-sans text-xs text-zinc-600 mt-2">
+                  Dense ndarray primitives, aligned vectors, inner products.
+                </p>
+              </div>
+              <div class="mt-4 pt-2 border-t border-slate-100 text-[10px] text-zinc-500 flex items-center gap-1.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                <span>Float64 Core</span>
+              </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div id="pipe-card-2"
+              class="rounded-xl bg-white border border-slate-200 p-4 flex flex-col justify-between hover:border-slate-400 transition-all shadow-sm">
+              <div>
+                <div class="text-[10px] text-zinc-500 mb-1 font-semibold">
+                  02 / SPECTRAL
+                </div>
+                <div class="font-bold text-zinc-950 text-sm">usel.linalg</div>
+                <p class="font-sans text-xs text-zinc-600 mt-2">
+                  Eigendecomposition, SVD, Cholesky, QR, and LU factorizations.
+                </p>
+              </div>
+              <div class="mt-4 pt-2 border-t border-slate-100 text-[10px] text-zinc-500 flex items-center gap-1.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                <span>LAPACK Bind</span>
+              </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div id="pipe-card-3"
+              class="rounded-xl bg-white border border-slate-200 p-4 flex flex-col justify-between hover:border-slate-400 transition-all shadow-sm">
+              <div>
+                <div class="text-[10px] text-zinc-500 mb-1 font-semibold">
+                  03 / DYNAMICS
+                </div>
+                <div class="font-bold text-zinc-950 text-sm">usel.solvers</div>
+                <p class="font-sans text-xs text-zinc-600 mt-2">
+                  Symplectic integrators, adaptive RK45, Crank-Nicolson.
+                </p>
+              </div>
+              <div class="mt-4 pt-2 border-t border-slate-100 text-[10px] text-zinc-500 flex items-center gap-1.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                <span>ODE / PDE</span>
+              </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div id="pipe-card-4"
+              class="rounded-xl bg-white border border-slate-200 p-4 flex flex-col justify-between hover:border-slate-400 transition-all shadow-sm">
+              <div>
+                <div class="text-[10px] text-zinc-500 mb-1 font-semibold">
+                  04 / FREQUENCY
+                </div>
+                <div class="font-bold text-zinc-950 text-sm">usel.fft</div>
+                <p class="font-sans text-xs text-zinc-600 mt-2">
+                  Split-operator kinetic momentum transformations.
+                </p>
+              </div>
+              <div class="mt-4 pt-2 border-t border-slate-100 text-[10px] text-zinc-500 flex items-center gap-1.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                <span>k-Space</span>
+              </div>
+            </div>
+
+            <!-- Step 5 -->
+            <div id="pipe-card-5"
+              class="rounded-xl bg-white border border-slate-200 p-4 flex flex-col justify-between hover:border-slate-400 transition-all shadow-sm">
+              <div>
+                <div class="text-[10px] text-zinc-500 mb-1 font-semibold">
+                  05 / ENSEMBLES
+                </div>
+                <div class="font-bold text-zinc-950 text-sm">usel.random</div>
+                <p class="font-sans text-xs text-zinc-600 mt-2">
+                  Wigner surmise, Gaussian Orthogonal Ensembles (GOE).
+                </p>
+              </div>
+              <div class="mt-4 pt-2 border-t border-slate-100 text-[10px] text-zinc-500 flex items-center gap-1.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                <span>Seeded PRNG</span>
+              </div>
+            </div>
+
+            <!-- Step 6 (Final Output) -->
+            <div id="pipe-card-6"
+              class="rounded-xl bg-emerald-50/70 border-2 border-emerald-500 p-4 flex flex-col justify-between shadow-sm">
+              <div>
+                <div class="text-[10px] text-emerald-800 mb-1 font-bold">
+                  06 / SIMULATION
+                </div>
+                <div class="font-bold text-zinc-950 text-sm">Physics Sim</div>
+                <p class="font-sans text-xs text-zinc-700 mt-2">
+                  Wave packets, quantum barriers, and observable dynamics.
+                </p>
+              </div>
+              <div
+                class="mt-4 pt-2 border-t border-emerald-200 text-[10px] text-emerald-800 font-bold flex items-center gap-1.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                <span>Observable</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 3: ENGINEERING DISCIPLINE & MODULE ARCHITECTURE -->
+      <section id="discipline" class="py-16 border-b border-slate-200 px-4 sm:px-6 bg-white">
+        <div class="max-w-content mx-auto">
+          <div class="mb-10 flex flex-col md:flex-row md:items-end justify-between border-b border-slate-200 pb-4">
+            <div>
+              <div
+                class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 font-mono text-xs font-semibold mb-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span>
+                TECHNICAL ARCHITECTURE • FIVE CORE DISCIPLINES
+              </div>
+              <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950">
+                Five modules. Mathematically razor-sharp.
+              </h2>
+            </div>
+            <p class="mt-2 md:mt-0 font-mono text-xs text-zinc-500">
+              Strict IEEE-754 • Five Core Execution Disciplines • 100% Offline
+              CPU Iron
+            </p>
+          </div>
+
+          <!-- 5-Module Architecture Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-12">
+            <!-- Module: Dynamics Core -->
+            <div id="module-dynamics-core"
+              class="rounded-xl bg-white border border-slate-200 p-5 shadow-sm hover:border-slate-400 hover:shadow-md transition-all flex flex-col justify-between relative overflow-hidden group">
+              <div class="flex items-start justify-between">
+                <div class="flex-1">
+                  <div class="flex items-center justify-between font-mono text-xs pb-3 border-b border-slate-100">
+                    <div class="flex items-center gap-2">
+                      <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                      <span class="font-bold text-zinc-950 font-mono">DYNAMICS CORE</span>
+                    </div>
+                    <span
+                      class="px-2 py-0.5 rounded bg-emerald-50 border border-emerald-200 text-[10px] text-emerald-800 font-semibold">usel.solvers</span>
+                  </div>
+                  <div class="my-4 pr-16">
+                    <h3 class="text-sm font-bold text-zinc-950 tracking-tight">
+                      Kinetic Wavepackets & Symplectic Integrators
+                    </h3>
+                    <p class="text-xs text-zinc-600 mt-1.5 leading-relaxed">
+                      Governs continuous wave mechanics and rotational harmonic
+                      loops with energy-conserving adaptive Runge-Kutta 4th
+                      order (RK45) time evolution.
+                    </p>
+                  </div>
+                </div>
+                <img src="public/obito.png" alt="Chibi mascot avatar for Dynamics Core"
+                  class="w-16 h-16 object-contain absolute right-3 top-10 drop-shadow-sm group-hover:scale-110 transition-transform select-none pointer-events-none" />
+              </div>
+              <div
+                class="pt-3 border-t border-slate-100 font-mono text-[11px] text-zinc-600 flex items-center justify-between">
+                <span class="text-zinc-500">rk45(), crank_nicolson()</span>
+                <span class="text-emerald-700 font-semibold">0.0000 ΔE Drift</span>
+              </div>
+            </div>
+
+            <!-- Module: Spectral FFT -->
+            <div id="module-spectral-fft"
+              class="rounded-xl bg-white border border-slate-200 p-5 shadow-sm hover:border-slate-400 hover:shadow-md transition-all flex flex-col justify-between relative overflow-hidden group">
+              <div class="flex items-start justify-between">
+                <div class="flex-1">
+                  <div class="flex items-center justify-between font-mono text-xs pb-3 border-b border-slate-100">
+                    <div class="flex items-center gap-2">
+                      <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                      <span class="font-bold text-zinc-950 font-mono">SPECTRAL FFT</span>
+                    </div>
+                    <span
+                      class="px-2 py-0.5 rounded bg-emerald-50 border border-emerald-200 text-[10px] text-emerald-800 font-semibold">usel.fft</span>
+                  </div>
+                  <div class="my-4 pr-16">
+                    <h3 class="text-sm font-bold text-zinc-950 tracking-tight">
+                      Split-Operator Momentum & Vector Transforms
+                    </h3>
+                    <p class="text-xs text-zinc-600 mt-1.5 leading-relaxed">
+                      Lightning-speed split-operator kinetic momentum
+                      transformations. Conducts 1024/2048 FFT grid translations
+                      in pure unrolled SIMD host registers.
+                    </p>
+                  </div>
+                </div>
+                <img src="public/shisui.png" alt="Chibi mascot avatar for Spectral FFT"
+                  class="w-16 h-16 object-contain absolute right-3 top-10 drop-shadow-sm group-hover:scale-110 transition-transform select-none pointer-events-none" />
+              </div>
+              <div
+                class="pt-3 border-t border-slate-100 font-mono text-[11px] text-zinc-600 flex items-center justify-between">
+                <span class="text-zinc-500">fft(), ifft(), k_space()</span>
+                <span class="text-emerald-700 font-semibold">O(N log N) Exact</span>
+              </div>
+            </div>
+
+            <!-- Module: Deterministic Linalg -->
+            <div id="module-linalg"
+              class="rounded-xl bg-white border border-slate-200 p-5 shadow-sm hover:border-slate-400 hover:shadow-md transition-all flex flex-col justify-between relative overflow-hidden group">
+              <div class="flex items-start justify-between">
+                <div class="flex-1">
+                  <div class="flex items-center justify-between font-mono text-xs pb-3 border-b border-slate-100">
+                    <div class="flex items-center gap-2">
+                      <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+                      <span class="font-bold text-zinc-950 font-mono">DETERMINISTIC LINALG</span>
+                    </div>
+                    <span
+                      class="px-2 py-0.5 rounded bg-emerald-50 border border-emerald-200 text-[10px] text-emerald-800 font-semibold">usel.linalg</span>
+                  </div>
+                  <div class="my-4 pr-16">
+                    <h3 class="text-sm font-bold text-zinc-950 tracking-tight">
+                      Precision Matrix State Space & Eigensystems
+                    </h3>
+                    <p class="text-xs text-zinc-600 mt-1.5 leading-relaxed">
+                      Calm, disciplined Hermitian matrix factorizations.
+                      High-precision SVD, Cholesky decomposition, and
+                      deterministic spectral radii down to 1e-16 residual.
+                    </p>
+                  </div>
+                </div>
+                <img src="public/naruto.png" alt="Chibi mascot avatar for Deterministic Linalg"
+                  class="w-16 h-16 object-contain absolute right-3 top-10 drop-shadow-sm group-hover:scale-110 transition-transform select-none pointer-events-none" />
+              </div>
+              <div
+                class="pt-3 border-t border-slate-100 font-mono text-[11px] text-zinc-600 flex items-center justify-between">
+                <span class="text-zinc-500">eigenvalues(), svd(), qr()</span>
+                <span class="text-emerald-700 font-semibold">1e-16 Residual</span>
+              </div>
+            </div>
+
+            <!-- Module: Runtime Telemetry -->
+            <div id="module-telemetry"
+              class="rounded-xl bg-white border border-slate-200 p-5 shadow-sm hover:border-slate-400 hover:shadow-md transition-all flex flex-col justify-between relative overflow-hidden group">
+              <div class="flex items-start justify-between">
+                <div class="flex-1">
+                  <div class="flex items-center justify-between font-mono text-xs pb-3 border-b border-slate-100">
+                    <div class="flex items-center gap-2">
+                      <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                      <span class="font-bold text-zinc-950 font-mono">RUNTIME TELEMETRY</span>
+                    </div>
+                    <span
+                      class="px-2 py-0.5 rounded bg-emerald-50 border border-emerald-200 text-[10px] text-emerald-800 font-semibold">usel.utils</span>
+                  </div>
+                  <div class="my-4 pr-16">
+                    <h3 class="text-sm font-bold text-zinc-950 tracking-tight">
+                      Microsecond Diagnostics & Machine Parity
+                    </h3>
+                    <p class="text-xs text-zinc-600 mt-1.5 leading-relaxed">
+                      Zero-overhead function profiling, hardware instruction
+                      inspection, and bit-for-bit host parity validation across
+                      environments.
+                    </p>
+                  </div>
+                </div>
+                <img src="public/sasuke.png" alt="Chibi mascot avatar for Runtime Telemetry"
+                  class="w-16 h-16 object-contain absolute right-3 top-10 drop-shadow-sm group-hover:scale-110 transition-transform select-none pointer-events-none" />
+              </div>
+              <div
+                class="pt-3 border-t border-slate-100 font-mono text-[11px] text-zinc-600 flex items-center justify-between">
+                <span class="text-zinc-500">timer(), profile(), verify()</span>
+                <span class="text-emerald-700 font-semibold">0.14 ms Latency</span>
+              </div>
+            </div>
+
+            <!-- Module: Spatial Tensors -->
+            <div id="module-tensors"
+              class="rounded-xl bg-white border border-slate-200 p-5 shadow-sm hover:border-slate-400 hover:shadow-md transition-all flex flex-col justify-between md:col-span-2 lg:col-span-2 relative overflow-hidden group">
+              <div>
+                <div class="flex items-center justify-between font-mono text-xs pb-3 border-b border-slate-100">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                    <span class="font-bold text-zinc-950 font-mono">SPATIAL TENSORS & MEMORY</span>
+                  </div>
+                  <span
+                    class="px-2 py-0.5 rounded bg-emerald-50 border border-emerald-200 text-[10px] text-emerald-800 font-semibold">usel.math</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center my-4">
+                  <div class="md:col-span-7 flex flex-col justify-between">
+                    <h3 class="text-sm font-bold text-zinc-950 tracking-tight">
+                      Dimensional Projection & Zero-Copy Memory
+                    </h3>
+                    <p class="text-xs text-zinc-600 mt-1.5 leading-relaxed">
+                      Dimensional matrix projection, higher-order tensor
+                      contractions, and zero-copy contiguous memory array slices
+                      aligned to CPU cache lines.
+                    </p>
+                  </div>
+                  <div class="md:col-span-5 grid grid-cols-2 gap-2 font-mono text-[11px]">
+                    <div class="p-2.5 rounded bg-slate-50 border border-slate-200">
+                      <span class="text-zinc-500 block text-[10px]">ALLOCATION</span>
+                      <span class="font-bold text-emerald-700">Zero Heap Thrash</span>
+                    </div>
+                    <div class="p-2.5 rounded bg-slate-50 border border-slate-200">
+                      <span class="text-zinc-500 block text-[10px]">ALIGNMENT</span>
+                      <span class="font-bold text-zinc-950">64-Byte Cache</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="pt-3 border-t border-slate-100 font-mono text-[11px] text-zinc-600 flex items-center justify-between">
+                <span class="text-zinc-500">matrix(), tensor_dot(), fold()</span>
+                <span class="text-emerald-700 font-semibold">Strict 8 GB Ceiling</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Four Technical Pillars -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div id="pillar-simd" class="rounded-xl bg-slate-50 border border-slate-200 p-5 shadow-2xs">
+              <div class="flex items-center justify-between mb-2 font-mono text-xs">
+                <span class="text-emerald-700 font-bold">01 / CPU-FIRST</span>
+                <span class="material-symbols-outlined text-zinc-500 text-lg">memory</span>
+              </div>
+              <h4 class="font-bold text-zinc-950 text-sm">
+                SIMD Instruction Native
+              </h4>
+              <p class="text-xs text-zinc-600 mt-1 leading-relaxed">
+                Engineered purely for AVX-512, AVX2, and NEON instructions. Zero
+                GPU driver dependencies.
+              </p>
+            </div>
+            <div id="pillar-memory" class="rounded-xl bg-slate-50 border border-slate-200 p-5 shadow-2xs">
+              <div class="flex items-center justify-between mb-2 font-mono text-xs">
+                <span class="text-zinc-950 font-bold">02 / 8 GB LIMIT</span>
+                <span class="material-symbols-outlined text-zinc-500 text-lg">speed</span>
+              </div>
+              <h4 class="font-bold text-zinc-950 text-sm">
+                Strict Memory Ceiling
+              </h4>
+              <p class="text-xs text-zinc-600 mt-1 leading-relaxed">
+                Contiguous memory arrays, in-place operator mutations, and zero
+                allocation during calculation steps.
+              </p>
+            </div>
+            <div id="pillar-precision" class="rounded-xl bg-slate-50 border border-slate-200 p-5 shadow-2xs">
+              <div class="flex items-center justify-between mb-2 font-mono text-xs">
+                <span class="text-zinc-950 font-bold">03 / PRECISION</span>
+                <span class="material-symbols-outlined text-zinc-500 text-lg">check_box</span>
+              </div>
+              <h4 class="font-bold text-zinc-950 text-sm">
+                Deterministic Seeding
+              </h4>
+              <p class="text-xs text-zinc-600 mt-1 leading-relaxed">
+                Bit-for-bit host parity across Linux, macOS, and Windows with
+                strict IEEE-754 compliance.
+              </p>
+            </div>
+            <div id="pillar-airgapped" class="rounded-xl bg-slate-50 border border-slate-200 p-5 shadow-2xs">
+              <div class="flex items-center justify-between mb-2 font-mono text-xs">
+                <span class="text-zinc-950 font-bold">04 / AIR-GAPPED</span>
+                <span class="material-symbols-outlined text-zinc-500 text-lg">lock</span>
+              </div>
+              <h4 class="font-bold text-zinc-950 text-sm">
+                Zero Outbound Network
+              </h4>
+              <p class="text-xs text-zinc-600 mt-1 leading-relaxed">
+                Zero telemetry and zero external calls. Safe for sensitive
+                computational physics labs.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 4: 9 CLEAN NAMESPACES -->
+      <section id="modules" class="py-16 border-b border-slate-200 bg-slate-50/50 px-4 sm:px-6">
+        <div class="max-w-content mx-auto">
+          <div class="text-center max-w-xl mx-auto mb-10">
+            <span class="text-emerald-700 font-mono text-xs uppercase tracking-widest font-bold">Clean Namespace
+              Architecture</span>
+            <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 mt-1">
+              Nine delineated packages.
+            </h2>
+            <p class="text-sm text-zinc-600 mt-1 font-sans">
+              Zero circular imports. Orthogonal, strictly typed Python modules.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            <!-- 1 -->
+            <div
+              class="p-4 rounded-xl bg-white border border-slate-200 hover:border-slate-400 transition-all shadow-sm">
+              <div class="flex items-center justify-between font-mono text-xs">
+                <span class="text-emerald-700 font-bold">usel.math</span>
+                <span
+                  class="text-[10px] text-zinc-600 px-2 py-0.5 rounded bg-slate-100 border border-slate-200 font-medium">Core</span>
+              </div>
+              <p class="text-xs text-zinc-600 mt-2">
+                Matrix creation, dense vectors, operator norms, spectral radii,
+                and precision casting.
+              </p>
+              <div class="mt-3 pt-2 border-t border-slate-100 font-mono text-[11px] text-zinc-500">
+                matrix(), norm(), inner(), fft()
+              </div>
+            </div>
+
+            <!-- 2 -->
+            <div
+              class="p-4 rounded-xl bg-white border border-slate-200 hover:border-slate-400 transition-all shadow-sm">
+              <div class="flex items-center justify-between font-mono text-xs">
+                <span class="text-zinc-950 font-bold">usel.linalg</span>
+                <span
+                  class="text-[10px] text-zinc-600 px-2 py-0.5 rounded bg-slate-100 border border-slate-200 font-medium">Linear</span>
+              </div>
+              <p class="text-xs text-zinc-600 mt-2">
+                Exact eigenvalues, SVD, Cholesky factorization, QR, and LU
+                forward/backward substitution.
+              </p>
+              <div class="mt-3 pt-2 border-t border-slate-100 font-mono text-[11px] text-zinc-500">
+                eigenvalues(), svd(), qr(), lu()
+              </div>
+            </div>
+
+            <!-- 3 -->
+            <div
+              class="p-4 rounded-xl bg-white border border-slate-200 hover:border-slate-400 transition-all shadow-sm">
+              <div class="flex items-center justify-between font-mono text-xs">
+                <span class="text-zinc-950 font-bold">usel.solvers</span>
+                <span
+                  class="text-[10px] text-zinc-600 px-2 py-0.5 rounded bg-slate-100 border border-slate-200 font-medium">Calculus</span>
+              </div>
+              <p class="text-xs text-zinc-600 mt-2">
+                Adaptive Runge-Kutta (RK45), Crank-Nicolson parabolic PDE
+                integrator, Newton-Raphson.
+              </p>
+              <div class="mt-3 pt-2 border-t border-slate-100 font-mono text-[11px] text-zinc-500">
+                rk45(), crank_nicolson(), newton()
+              </div>
+            </div>
+
+            <!-- 4 -->
+            <div
+              class="p-4 rounded-xl bg-white border border-slate-200 hover:border-slate-400 transition-all shadow-sm">
+              <div class="flex items-center justify-between font-mono text-xs">
+                <span class="text-zinc-950 font-bold">usel.random</span>
+                <span
+                  class="text-[10px] text-zinc-600 px-2 py-0.5 rounded bg-slate-100 border border-slate-200 font-medium">Stochastic</span>
+              </div>
+              <p class="text-xs text-zinc-600 mt-2">
+                Gaussian Orthogonal Ensembles (GOE), Wigner surmise
+                distributions, and deterministic PRNG seeding.
+              </p>
+              <div class="mt-3 pt-2 border-t border-slate-100 font-mono text-[11px] text-zinc-500">
+                goe(), wigner_surmise(), seed()
+              </div>
+            </div>
+
+            <!-- 5 -->
+            <div
+              class="p-4 rounded-xl bg-white border border-slate-200 hover:border-slate-400 transition-all shadow-sm">
+              <div class="flex items-center justify-between font-mono text-xs">
+                <span class="text-zinc-950 font-bold">usel.utils</span>
+                <span
+                  class="text-[10px] text-zinc-600 px-2 py-0.5 rounded bg-slate-100 border border-slate-200 font-medium">Instrumentation</span>
+              </div>
+              <p class="text-xs text-zinc-600 mt-2">
+                High-precision microsecond profiler, Hermitian matrix
+                predicates, and memory floor assertions.
+              </p>
+              <div class="mt-3 pt-2 border-t border-slate-100 font-mono text-[11px] text-zinc-500">
+                timer(), is_hermitian(), profile()
+              </div>
+            </div>
+
+            <!-- 6 -->
+            <div
+              class="p-4 rounded-xl bg-white border border-slate-200 hover:border-slate-400 transition-all shadow-sm">
+              <div class="flex items-center justify-between font-mono text-xs">
+                <span class="text-zinc-950 font-bold">usel.logging</span>
+                <span
+                  class="text-[10px] text-zinc-600 px-2 py-0.5 rounded bg-slate-100 border border-slate-200 font-medium">Telemetry</span>
+              </div>
+              <p class="text-xs text-zinc-600 mt-2">
+                Structured NDJSON stream sinks, simulation step milestones, and
+                step telemetry buffers.
+              </p>
+              <div class="mt-3 pt-2 border-t border-slate-100 font-mono text-[11px] text-zinc-500">
+                get_logger(), record_state()
+              </div>
+            </div>
+
+            <!-- 7 -->
+            <div
+              class="p-4 rounded-xl bg-white border border-slate-200 hover:border-slate-400 transition-all shadow-sm">
+              <div class="flex items-center justify-between font-mono text-xs">
+                <span class="text-zinc-950 font-bold">usel.config</span>
+                <span
+                  class="text-[10px] text-zinc-600 px-2 py-0.5 rounded bg-slate-100 border border-slate-200 font-medium">Profiles</span>
+              </div>
+              <p class="text-xs text-zinc-600 mt-2">
+                Declarative experimental run profiles via TOML and JSON schemas
+                with strict validation.
+              </p>
+              <div class="mt-3 pt-2 border-t border-slate-100 font-mono text-[11px] text-zinc-500">
+                load_experiment(), validate_spec()
+              </div>
+            </div>
+
+            <!-- 8 -->
+            <div
+              class="p-4 rounded-xl bg-white border border-slate-200 hover:border-slate-400 transition-all shadow-sm">
+              <div class="flex items-center justify-between font-mono text-xs">
+                <span class="text-zinc-950 font-bold">usel.io</span>
+                <span
+                  class="text-[10px] text-zinc-600 px-2 py-0.5 rounded bg-slate-100 border border-slate-200 font-medium">Storage</span>
+              </div>
+              <p class="text-xs text-zinc-600 mt-2">
+                Zero-copy binary tensor dumps, native NumPy .npy array exports,
+                and streaming CSV matrices.
+              </p>
+              <div class="mt-3 pt-2 border-t border-slate-100 font-mono text-[11px] text-zinc-500">
+                save_matrix(), export_vtk()
+              </div>
+            </div>
+
+            <!-- 9 -->
+            <div
+              class="p-4 rounded-xl bg-white border border-slate-200 hover:border-slate-400 transition-all shadow-sm">
+              <div class="flex items-center justify-between font-mono text-xs">
+                <span class="text-zinc-950 font-bold">usel.cli</span>
+                <span
+                  class="text-[10px] text-zinc-600 px-2 py-0.5 rounded bg-slate-100 border border-slate-200 font-medium">Terminal</span>
+              </div>
+              <p class="text-xs text-zinc-600 mt-2">
+                Host diagnostics, CPU vector instruction probe, and automated
+                precision verification harness.
+              </p>
+              <div class="mt-3 pt-2 border-t border-slate-100 font-mono text-[11px] text-zinc-500">
+                usel doctor, usel benchmark
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 5: CLEAN SYNTAX & EXECUTION (Interactive Python Workbench) -->
+      <section id="code" class="py-16 border-b border-slate-200 px-4 sm:px-6 bg-white">
+        <div class="max-w-content mx-auto">
+          <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 pb-3 border-b border-slate-200">
+            <div>
+              <span class="text-emerald-700 font-mono text-xs uppercase tracking-widest font-bold">Syntax &
+                Semantics</span>
+              <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 mt-1">
+                Physics-native code. Immediate feedback.
+              </h2>
+            </div>
+            <div class="mt-2 md:mt-0 font-mono text-xs text-zinc-600 flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+              <span>Zero boilerplate • Deterministic output</span>
+            </div>
+          </div>
+
+          <!-- Interactive Matrix Tuning Bar -->
+          <div
+            class="mb-4 p-3 rounded-lg bg-slate-50 border border-slate-200 flex flex-wrap items-center justify-between gap-3 font-mono text-xs">
+            <div class="flex items-center gap-2">
+              <span class="text-zinc-500 font-bold uppercase text-[11px]">Hamiltonian Matrix A:</span>
+              <div class="inline-flex items-center gap-1 bg-white px-2 py-1 rounded border border-slate-200">
+                <span>[</span>
+                <input id="matrix-a11" type="number" step="0.5" value="2.0"
+                  class="w-12 text-center text-xs py-0.5 px-1 border border-slate-200 rounded text-zinc-950 font-bold focus:border-emerald-500 focus:outline-none" />
+                <span>,</span>
+                <input id="matrix-a12" type="number" step="0.5" value="1.0"
+                  class="w-12 text-center text-xs py-0.5 px-1 border border-slate-200 rounded text-zinc-950 font-bold focus:border-emerald-500 focus:outline-none" />
+                <span>;</span>
+                <input id="matrix-a21" type="number" step="0.5" value="1.0"
+                  class="w-12 text-center text-xs py-0.5 px-1 border border-slate-200 rounded text-zinc-950 font-bold focus:border-emerald-500 focus:outline-none" />
+                <span>,</span>
+                <input id="matrix-a22" type="number" step="0.5" value="2.0"
+                  class="w-12 text-center text-xs py-0.5 px-1 border border-slate-200 rounded text-zinc-950 font-bold focus:border-emerald-500 focus:outline-none" />
+                <span>]</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button id="run-code-btn"
+                class="px-3 py-1.5 rounded-md bg-emerald-600 text-white font-bold text-[11px] hover:bg-emerald-700 transition-colors flex items-center gap-1.5 shadow-xs">
+                <span class="material-symbols-outlined text-xs">play_arrow</span>
+                <span>RUN SCRIPT</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="relative">
+            <div
+              class="grid grid-cols-1 lg:grid-cols-12 rounded-xl bg-zinc-950 text-white border border-slate-800 shadow-md overflow-hidden">
+              <!-- Left: Python Editor -->
+              <div
+                class="lg:col-span-7 bg-[#0D1117] border-b lg:border-b-0 lg:border-r border-slate-800 flex flex-col font-mono">
+                <div
+                  class="px-4 py-2.5 bg-[#161B22] border-b border-slate-800 flex items-center justify-between text-xs text-zinc-400">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-red-500/80"></span>
+                    <span class="w-2.5 h-2.5 rounded-full bg-amber-500/80"></span>
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500/80"></span>
+                    <span class="text-zinc-300 ml-2 font-medium">hamiltonian_solve.py</span>
+                  </div>
+                  <button id="copy-code-btn"
+                    class="text-zinc-400 hover:text-white transition-colors flex items-center gap-1 text-[11px]">
+                    <span class="material-symbols-outlined text-sm">content_copy</span>
+                    <span id="copy-code-label">Copy</span>
+                  </button>
+                </div>
+                <div class="p-5 text-xs sm:text-sm leading-relaxed text-zinc-300 overflow-x-auto">
+                  <div>
+                    <span class="text-zinc-600 select-none mr-4">01</span><span
+                      class="text-emerald-400 font-semibold">from</span>
+                    usel.math
+                    <span class="text-emerald-400 font-semibold">import</span>
+                    matrix
+                  </div>
+                  <div>
+                    <span class="text-zinc-600 select-none mr-4">02</span><span
+                      class="text-emerald-400 font-semibold">from</span>
+                    usel.linalg
+                    <span class="text-emerald-400 font-semibold">import</span>
+                    eigenvalues
+                  </div>
+                  <div>
+                    <span class="text-zinc-600 select-none mr-4">03</span>
+                  </div>
+                  <div>
+                    <span class="text-zinc-600 select-none mr-4">04</span><span class="text-zinc-500"># Construct
+                      Hamiltonian test operator (2-state
+                      coupling)</span>
+                  </div>
+                  <div>
+                    <span class="text-zinc-600 select-none mr-4">05</span>A =
+                    matrix([
+                  </div>
+                  <div>
+                    <span class="text-zinc-600 select-none mr-4">06</span>
+                    [<span id="code-a11" class="text-amber-300 font-semibold">2.0</span>,
+                    <span id="code-a12" class="text-amber-300 font-semibold">1.0</span>],
+                  </div>
+                  <div>
+                    <span class="text-zinc-600 select-none mr-4">07</span>
+                    [<span id="code-a21" class="text-amber-300 font-semibold">1.0</span>,
+                    <span id="code-a22" class="text-amber-300 font-semibold">2.0</span>]
+                  </div>
+                  <div>
+                    <span class="text-zinc-600 select-none mr-4">08</span>])
+                  </div>
+                  <div>
+                    <span class="text-zinc-600 select-none mr-4">09</span>
+                  </div>
+                  <div>
+                    <span class="text-zinc-600 select-none mr-4">10</span><span class="text-zinc-500"># Compute exact
+                      real spectra & orthonormal
+                      eigenspace</span>
+                  </div>
+                  <div>
+                    <span class="text-zinc-600 select-none mr-4">11</span>values, vectors = eigenvalues(A)
+                  </div>
+                  <div>
+                    <span class="text-zinc-600 select-none mr-4">12</span><span
+                      class="text-emerald-400 font-semibold">print</span>(<span
+                      class="text-emerald-300">"Eigenvalues:"</span>,
+                    values)
+                  </div>
+                  <div>
+                    <span class="text-zinc-600 select-none mr-4">13</span><span
+                      class="text-emerald-400 font-semibold">print</span>(<span class="text-emerald-300">"Ground
+                      state:"</span>,
+                    vectors[:,
+                    <span class="text-emerald-400 font-bold">0</span>])
+                  </div>
+                </div>
+                <div
+                  class="mt-auto px-4 py-2 bg-[#161B22] border-t border-slate-800 flex items-center justify-between text-[11px] text-zinc-400">
+                  <span>Python 3.12 (USEL native engine)</span>
+                  <span>Encoding: UTF-8</span>
+                </div>
+              </div>
+
+              <!-- Right: Execution Log -->
+              <div class="lg:col-span-5 bg-[#090D13] p-5 flex flex-col justify-between font-mono text-xs">
+                <div>
+                  <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                    <span class="text-zinc-400 font-semibold tracking-wider">EXECUTION LOG</span>
+                    <span id="log-time-badge"
+                      class="px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-800 text-emerald-400 font-semibold text-[11px] tabular-nums">0.14
+                      ms</span>
+                  </div>
+                  <div class="mt-4 space-y-3">
+                    <div class="text-zinc-400">
+                      $ python hamiltonian_solve.py
+                    </div>
+                    <div class="p-3 rounded-lg bg-[#111620] border border-slate-800 text-white space-y-1">
+                      <div class="text-zinc-400 text-[11px]">Eigenvalues:</div>
+                      <div id="log-eigenvalues" class="text-emerald-400 font-bold tabular-nums">
+                        [3.00000000, 1.00000000]
+                      </div>
+                      <div class="text-zinc-400 text-[11px] pt-1">
+                        Ground state vector:
+                      </div>
+                      <div id="log-vector" class="text-white font-medium tabular-nums">
+                        [0.70710678, 0.70710678]
+                      </div>
+                    </div>
+                    <div
+                      class="p-3 rounded-lg bg-[#111620] border border-slate-800 space-y-1.5 text-[11px] text-zinc-300">
+                      <div class="flex justify-between">
+                        <span>Spectral Gap Δε:</span>
+                        <span id="log-gap" class="text-white font-medium tabular-nums">2.000000</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span>Hermitian Residual:</span>
+                        <span id="log-residual" class="text-emerald-400 font-medium tabular-nums">0.000e+00</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span>Target Hardware:</span>
+                        <span class="text-white font-medium">CPU Native SIMD</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="mt-6 pt-3 border-t border-slate-800 flex items-center justify-between text-[11px] text-zinc-400">
+                  <span class="flex items-center gap-1 text-white">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                    Sub-microsecond precision
+                  </span>
+                  <span>PID: 49201</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 6: DIAGNOSTICS & BENCHMARKS (Interactive CLI Terminal) -->
+      <section id="benchmarks" class="py-16 border-b border-slate-200 bg-slate-50/50 px-4 sm:px-6">
+        <div class="max-w-content mx-auto">
+          <div class="text-center max-w-xl mx-auto mb-10">
+            <span class="text-emerald-700 font-mono text-xs uppercase tracking-widest font-bold">Command Line
+              Diagnostics</span>
+            <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 mt-1">
+              Built-in system doctor.
+            </h2>
+            <p class="text-sm text-zinc-600 mt-1">
+              Verify machine instructions and run standardized numerical
+              benchmarks with a single command.
+            </p>
+          </div>
+
+          <!-- Terminal Box -->
+          <div
+            class="max-w-3xl mx-auto rounded-xl bg-white border border-slate-300 overflow-hidden font-mono text-xs shadow-sm relative">
+            <div class="hidden md:block absolute top-11 right-0 z-10 select-none pointer-events-none drop-shadow-md">
+              <img src="public/shisui.png" alt="Chibi mascot watching the terminal"
+                class="w-14 h-14 object-contain hover:scale-105 transition-transform" />
+            </div>
+            <!-- Terminal Header -->
+            <div
+              class="px-4 py-2.5 bg-slate-100 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2 text-zinc-600">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-slate-300"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-slate-300"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-slate-300"></span>
+                <span class="text-zinc-800 font-semibold ml-1">usel-terminal • zsh</span>
+              </div>
+              <!-- Interactive Terminal Buttons -->
+              <div class="flex items-center gap-2 text-[11px]">
+                <button id="term-run-doctor-btn"
+                  class="px-2.5 py-1 rounded bg-white border border-slate-300 hover:bg-slate-50 text-zinc-800 font-semibold transition-colors flex items-center gap-1 shadow-2xs">
+                  <span class="material-symbols-outlined text-xs text-emerald-700">healing</span>
+                  <span>usel doctor</span>
+                </button>
+                <button id="term-run-bench-btn"
+                  class="px-2.5 py-1 rounded bg-white border border-slate-300 hover:bg-slate-50 text-zinc-800 font-semibold transition-colors flex items-center gap-1 shadow-2xs">
+                  <span class="material-symbols-outlined text-xs text-emerald-700">speed</span>
+                  <span>usel benchmark</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Terminal Body -->
+            <div id="terminal-stream-content" class="p-5 space-y-4 text-zinc-700 leading-relaxed bg-white">
+              <div>
+                <div class="flex items-center gap-2 text-zinc-950 font-semibold">
+                  <span class="text-emerald-600 font-bold">$</span>
+                  <span>usel doctor</span>
+                </div>
+                <div class="mt-2 pl-4 border-l-2 border-emerald-500/50 space-y-1 text-zinc-600 text-[11px]">
+                  <div>[✓] Python 3.12.2 (CPython x86_64 target)</div>
+                  <div>[✓] CPU SIMD: AVX-512 extensions active</div>
+                  <div>
+                    [✓] System Memory: 16.0 GB Total • 11.4 GB Free (Exceeds 8
+                    GB budget)
+                  </div>
+                  <div>
+                    [✓] BLAS Backend: OpenBLAS 0.3.26 with SIMD dispatch
+                  </div>
+                  <div class="text-emerald-700 pt-1 font-bold">
+                    → 4/4 checks passed. Environment is fully optimized for USEL
+                    simulations.
+                  </div>
+                </div>
+              </div>
+
+              <div class="pt-2">
+                <div class="flex items-center gap-2 text-zinc-950 font-semibold">
+                  <span class="text-emerald-600 font-bold">$</span>
+                  <span>usel benchmark --size 200</span>
+                </div>
+                <div class="mt-2 pl-4 border-l-2 border-slate-200 space-y-1 text-zinc-600 text-[11px]">
+                  <div>
+                    [*] Generating 200x200 symmetric random matrix (Wigner
+                    Ensemble)...
+                  </div>
+                  <div>
+                    [*] Running divide-and-conquer tridiagonal solver...
+                  </div>
+                  <div class="text-zinc-950 font-medium">
+                    [+] Matrix Dimension: 200 x 200 (40,000 floats)
+                  </div>
+                  <div class="text-zinc-950 font-medium">
+                    [+] Execution Time:
+                    <span class="text-emerald-700 font-bold tabular-nums">1.42 seconds</span>
+                  </div>
+                  <div class="text-[11px] text-zinc-500">
+                    Residual Norm ||AX - λX||_F: 2.11e-15 (Machine Epsilon
+                    Preserved)
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-2 pt-2 text-zinc-950">
+                <span class="text-emerald-600 font-bold">$</span>
+                <span class="w-1.5 h-3.5 bg-emerald-600 inline-block animate-pulse"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 7: ROADMAP -->
+      <section id="roadmap" class="py-16 border-b border-slate-200 px-4 sm:px-6 bg-white">
+        <div class="max-w-content mx-auto">
+          <div class="text-center max-w-xl mx-auto mb-10">
+            <span class="text-emerald-700 font-mono text-xs uppercase tracking-widest font-bold">Technical
+              Milestones</span>
+            <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 mt-1">
+              Roadmap for computational physics.
+            </h2>
+            <p class="text-sm text-zinc-600 mt-1">
+              Expanding supported continuous differential equations strictly on
+              the CPU.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 font-mono text-xs">
+            <!-- v1.0 Released -->
+            <div
+              class="p-4 rounded-xl bg-emerald-50/50 border-2 border-emerald-600 flex flex-col justify-between shadow-sm">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-emerald-800 font-bold text-sm">v1.0</span>
+                  <span
+                    class="px-2 py-0.5 rounded-full bg-emerald-600 text-white text-[10px] font-bold uppercase">Released</span>
+                </div>
+
+                <div class="text-zinc-950 font-bold">Foundation</div>
+
+                <ul class="mt-3 space-y-1.5 text-zinc-700 text-[11px]">
+                  <li>• Matrix & vector primitives</li>
+                  <li>• LAPACK eigensystem</li>
+                  <li>• Basic ODE integrators</li>
+                  <li>• System doctor CLI</li>
+                </ul>
+              </div>
+
+              <div class="mt-4 pt-2 border-t border-emerald-200 text-emerald-800 font-bold text-[11px]">
+                Production Stable
+              </div>
+            </div>
+
+            <!-- v1.1 Released -->
+            <div
+              class="p-4 rounded-xl bg-emerald-50/50 border-2 border-emerald-600 flex flex-col justify-between shadow-sm">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-emerald-800 font-bold text-sm">v1.1</span>
+                  <span
+                    class="px-2 py-0.5 rounded-full bg-emerald-600 text-white text-[10px] font-bold uppercase">Released</span>
+                </div>
+
+                <div class="text-zinc-950 font-bold">Schrödinger PDE</div>
+
+                <ul class="mt-3 space-y-1.5 text-zinc-700 text-[11px]">
+                  <li>• Crank-Nicolson complex</li>
+                  <li>• Split-operator FFT</li>
+                  <li>• Tunneling barriers</li>
+                  <li>• Wave packet propagation</li>
+                </ul>
+              </div>
+
+              <div class="mt-4 pt-2 border-t border-emerald-200 text-emerald-800 font-bold text-[11px]">
+                Completed
+              </div>
+            </div>
+
+            <!-- v1.2 Released -->
+            <div
+              class="p-4 rounded-xl bg-emerald-50/50 border-2 border-emerald-600 flex flex-col justify-between shadow-sm">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-emerald-800 font-bold text-sm">v1.2</span>
+                  <span
+                    class="px-2 py-0.5 rounded-full bg-emerald-600 text-white text-[10px] font-bold uppercase">Released</span>
+                </div>
+
+                <div class="text-zinc-950 font-bold">Dirac Equation</div>
+
+                <ul class="mt-3 space-y-1.5 text-zinc-700 text-[11px]">
+                  <li>• Relativistic 4-spinors</li>
+                  <li>• Pauli matrix algebra</li>
+                  <li>• Klein tunneling physics</li>
+                  <li>• Zitterbewegung dynamics</li>
+                </ul>
+              </div>
+
+              <div class="mt-4 pt-2 border-t border-emerald-200 text-emerald-800 font-bold text-[11px]">
+                Completed
+              </div>
+            </div>
+
+            <!-- v1.3 Released -->
+            <div
+              class="p-4 rounded-xl bg-emerald-50/50 border-2 border-emerald-600 flex flex-col justify-between shadow-sm">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-emerald-800 font-bold text-sm">v1.3</span>
+                  <span
+                    class="px-2 py-0.5 rounded-full bg-emerald-600 text-white text-[10px] font-bold uppercase">Released</span>
+                </div>
+
+                <div class="text-zinc-950 font-bold">Maxwell Field</div>
+
+                <ul class="mt-3 space-y-1.5 text-zinc-700 text-[11px]">
+                  <li>• FDTD time-domain waves</li>
+                  <li>• PML boundary conditions</li>
+                  <li>• Dielectric interfaces</li>
+                  <li>• Poynting energy vectors</li>
+                </ul>
+              </div>
+
+              <div class="mt-4 pt-2 border-t border-emerald-200 text-emerald-800 font-bold text-[11px]">
+                Completed
+              </div>
+            </div>
+
+            <!-- v1.4 Released -->
+            <div
+              class="p-4 rounded-xl bg-emerald-50/50 border-2 border-emerald-600 flex flex-col justify-between shadow-sm">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-emerald-800 font-bold text-sm">v1.4</span>
+                  <span
+                    class="px-2 py-0.5 rounded-full bg-emerald-600 text-white text-[10px] font-bold uppercase">Released</span>
+                </div>
+
+                <div class="text-zinc-950 font-bold">Stochastic PDE</div>
+
+                <ul class="mt-3 space-y-1.5 text-zinc-700 text-[11px]">
+                  <li>• Black-Scholes solver</li>
+                  <li>• Ito calculus step engine</li>
+                  <li>• Greeks sensitivity analysis</li>
+                  <li>• Heat transform mappings</li>
+                </ul>
+              </div>
+
+              <div class="mt-4 pt-2 border-t border-emerald-200 text-emerald-800 font-bold text-[11px]">
+                Completed
+              </div>
+            </div>
+
+            <!-- v1.5 Wave Equation -->
+            <div
+              class="p-4 rounded-xl bg-white border border-slate-200 flex flex-col justify-between hover:border-slate-400 transition-all shadow-sm">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-zinc-950 font-bold text-sm">v1.5</span>
+                  <span class="text-[10px] text-zinc-500 font-medium">
+                    Next
+                  </span>
+                </div>
+
+                <div class="text-zinc-950 font-semibold">Wave Equation</div>
+
+                <ul class="mt-3 space-y-1.5 text-zinc-600 text-[11px]">
+                  <li>• Finite-difference wave solver</li>
+                  <li>• Acoustic propagation</li>
+                  <li>• Electromagnetic waves</li>
+                  <li>• Boundary reflections</li>
+                </ul>
+              </div>
+
+              <div class="mt-4 pt-2 border-t border-slate-100 text-zinc-500 text-[11px]">
+                Planned Milestone
+              </div>
+            </div>
+
+            <!-- v1.6 General PDE -->
+            <div
+              class="p-4 rounded-xl bg-white border border-slate-200 flex flex-col justify-between hover:border-slate-400 transition-all shadow-sm">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-zinc-950 font-bold text-sm">v1.6</span>
+                  <span class="text-[10px] text-zinc-500 font-medium">
+                    Planned
+                  </span>
+                </div>
+
+                <div class="text-zinc-950 font-semibold">PDE Framework</div>
+
+                <ul class="mt-3 space-y-1.5 text-zinc-600 text-[11px]">
+                  <li>• Heat & diffusion equations</li>
+                  <li>• Poisson equation</li>
+                  <li>• Boundary-value problems</li>
+                  <li>• Finite-difference operators</li>
+                </ul>
+              </div>
+
+              <div class="mt-4 pt-2 border-t border-slate-100 text-zinc-500 text-[11px]">
+                Planned Milestone
+              </div>
+            </div>
+
+            <!-- v1.7 Nonlinear ODE/PDE -->
+            <div
+              class="p-4 rounded-xl bg-white border border-slate-200 flex flex-col justify-between hover:border-slate-400 transition-all shadow-sm">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-zinc-950 font-bold text-sm">v1.7</span>
+                  <span class="text-[10px] text-zinc-500 font-medium">
+                    Planned
+                  </span>
+                </div>
+
+                <div class="text-zinc-950 font-semibold">
+                  Nonlinear Dynamics
+                </div>
+
+                <ul class="mt-3 space-y-1.5 text-zinc-600 text-[11px]">
+                  <li>• Nonlinear ODE solvers</li>
+                  <li>• Nonlinear PDE models</li>
+                  <li>• Bifurcation analysis</li>
+                  <li>• Chaos & attractors</li>
+                </ul>
+              </div>
+
+              <div class="mt-4 pt-2 border-t border-slate-100 text-zinc-500 text-[11px]">
+                Research Track
+              </div>
+            </div>
+
+            <!-- v1.8 Tensor Calculus -->
+            <div
+              class="p-4 rounded-xl bg-white border border-slate-200 flex flex-col justify-between hover:border-slate-400 transition-all shadow-sm">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-zinc-950 font-bold text-sm">v1.8</span>
+                  <span class="text-[10px] text-zinc-500 font-medium">
+                    Planned
+                  </span>
+                </div>
+
+                <div class="text-zinc-950 font-semibold">
+                  Tensor Calculus
+                </div>
+
+                <ul class="mt-3 space-y-1.5 text-zinc-600 text-[11px]">
+                  <li>• Tensor operations</li>
+                  <li>• Metric & inverse metric</li>
+                  <li>• Christoffel symbols</li>
+                  <li>• Curvature tensors</li>
+                </ul>
+              </div>
+
+              <div class="mt-4 pt-2 border-t border-slate-100 text-zinc-500 text-[11px]">
+                Research Track
+              </div>
+            </div>
+
+            <!-- v1.9 QCD -->
+            <div
+              class="p-4 rounded-xl bg-white border border-slate-200 flex flex-col justify-between hover:border-slate-400 transition-all shadow-sm">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-zinc-950 font-bold text-sm">v1.9</span>
+                  <span class="text-[10px] text-zinc-500 font-medium">
+                    Future
+                  </span>
+                </div>
+
+                <div class="text-zinc-950 font-semibold">
+                  Quantum Chromodynamics
+                </div>
+
+                <ul class="mt-3 space-y-1.5 text-zinc-600 text-[11px]">
+                  <li>• SU(3) gauge fields</li>
+                  <li>• Lattice discretization</li>
+                  <li>• Gauge-field dynamics</li>
+                  <li>• Quark & gluon interactions</li>
+                </ul>
+              </div>
+
+              <div class="mt-4 pt-2 border-t border-slate-100 text-zinc-500 text-[11px]">
+                Advanced Research
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- SECTION 8: ARCHITECTURAL NON-GOALS -->
+      <section id="non-goals" class="py-16 border-b border-slate-200 bg-slate-50/50 px-4 sm:px-6">
+        <div class="max-w-content mx-auto">
+          <div class="text-center max-w-xl mx-auto mb-10">
+            <span class="text-zinc-500 font-mono text-xs uppercase tracking-widest font-bold">Architectural
+              Non-Goals</span>
+            <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 mt-1">
+              Deliberately focused.
+            </h2>
+            <p class="text-sm text-zinc-600 mt-1">
+              What we refuse to build is just as intentional as what we ship.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <div class="p-5 rounded-xl bg-white border border-slate-200 shadow-sm">
+              <div class="flex items-center gap-2 text-zinc-950 font-mono text-xs font-bold">
+                <span class="text-red-500">✕</span>
+                <span>NO QUANTUM CIRCUIT HYPE</span>
+              </div>
+              <p class="mt-2.5 text-xs text-zinc-600 leading-relaxed">
+                USEL is not a noisy quantum gate simulator. We model continuous
+                wave functions and real physical Hamiltonians.
+              </p>
+            </div>
+
+            <div class="p-5 rounded-xl bg-white border border-slate-200 shadow-sm">
+              <div class="flex items-center gap-2 text-zinc-950 font-mono text-xs font-bold">
+                <span class="text-red-500">✕</span>
+                <span>NO BULKY ML WEIGHTS</span>
+              </div>
+              <p class="mt-2.5 text-xs text-zinc-600 leading-relaxed">
+                Zero 10GB neural network weights, PyTorch runtime bloat, or
+                black boxes. Pure analytic mathematics and exact numerical
+                solvers.
+              </p>
+            </div>
+
+            <div class="p-5 rounded-xl bg-white border border-slate-200 shadow-sm">
+              <div class="flex items-center gap-2 text-zinc-950 font-mono text-xs font-bold">
+                <span class="text-red-500">✕</span>
+                <span>NO GPU DRIVER LOCK-IN</span>
+              </div>
+              <p class="mt-2.5 text-xs text-zinc-600 leading-relaxed">
+                No CUDA compilation headaches or fragile display driver updates
+                breaking reproducible scientific calculations.
+              </p>
+            </div>
+
+            <div class="p-5 rounded-xl bg-white border border-slate-200 shadow-sm">
+              <div class="flex items-center gap-2 text-zinc-950 font-mono text-xs font-bold">
+                <span class="text-red-500">✕</span>
+                <span>NO CLOUD SUBSCRIPTIONS</span>
+              </div>
+              <p class="mt-2.5 text-xs text-zinc-600 leading-relaxed">
+                Zero remote API keys, usage metering, or cluster logins. You
+                compile the library and run it completely on your local
+                workstation.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 9: QUICKSTART / INSTALLATION -->
+      <section id="quickstart" class="py-16 border-b border-slate-200 px-4 sm:px-6 bg-white">
+        <div class="max-w-content mx-auto">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+            <!-- Left info -->
+            <div class="lg:col-span-5 space-y-3">
+              <div
+                class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 font-mono text-xs text-emerald-800 font-semibold shadow-2xs">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                <span>AIR-GAPPED COMPLIANT</span>
+              </div>
+              <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950">
+                Nothing leaves your machine.
+              </h2>
+              <p class="text-sm text-zinc-600 leading-relaxed">
+                USEL is packaged with zero telemetry and zero external telemetry
+                listeners. Install via uv, pip, or inspect the entire codebase
+                from GitHub.
+              </p>
+              <div class="pt-2 flex flex-col gap-2 font-mono text-xs text-zinc-600">
+                <div class="flex items-center gap-2">
+                  <span class="text-emerald-600 font-bold">✓</span> Zero
+                  HTTP/gRPC telemetry calls
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="text-emerald-600 font-bold">✓</span> Zero
+                  phone-home crash reporters
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="text-emerald-600 font-bold">✓</span> MIT
+                  Permissive License
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Install Box -->
+            <div
+              class="lg:col-span-7 rounded-xl bg-slate-50 border border-slate-200 p-5 sm:p-6 font-mono text-xs shadow-sm relative">
+              <div class="flex items-center justify-between pb-3 border-b border-slate-200 mb-4">
+                <span class="text-zinc-950 font-bold">GET STARTED IN SECONDS</span>
+                <span class="text-zinc-500 text-[11px] font-medium">POSIX / WINDOWS</span>
+              </div>
+              <div class="space-y-3.5">
+                <!-- UV Command -->
+                <div>
+                  <div class="text-[10px] uppercase text-zinc-500 mb-1 font-semibold">
+                    Recommended (Modern Fast Package Manager)
+                  </div>
+                  <div
+                    class="flex items-center justify-between p-3 rounded-lg bg-white border border-slate-200 shadow-2xs group">
+                    <span class="text-emerald-700 font-bold select-all">uv add usel &amp;&amp; uv run usel
+                      version</span>
+                    <button data-copy="uv add usel && uv run usel version"
+                      class="text-zinc-400 hover:text-zinc-900 transition-colors flex items-center gap-1 text-[11px]">
+                      <span class="material-symbols-outlined text-sm copy-icon">content_copy</span>
+                      <span class="copy-feedback hidden sm:inline">Copy</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- PIP Command -->
+                <div>
+                  <div class="text-[10px] uppercase text-zinc-500 mb-1 font-semibold">
+                    Standard pip
+                  </div>
+                  <div
+                    class="flex items-center justify-between p-3 rounded-lg bg-white border border-slate-200 shadow-2xs group">
+                    <span class="text-zinc-950 font-medium select-all">pip install usel</span>
+                    <button data-copy="pip install usel"
+                      class="text-zinc-400 hover:text-zinc-900 transition-colors flex items-center gap-1 text-[11px]">
+                      <span class="material-symbols-outlined text-sm copy-icon">content_copy</span>
+                      <span class="copy-feedback hidden sm:inline">Copy</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Verify Diagnostics -->
+                <div>
+                  <div class="text-[10px] uppercase text-zinc-500 mb-1 font-semibold">
+                    Run Hardware Verification
+                  </div>
+                  <div
+                    class="flex items-center justify-between p-3 rounded-lg bg-white border border-slate-200 shadow-2xs group">
+                    <span class="text-zinc-600 select-all">python -m usel.cli doctor</span>
+                    <button data-copy="python -m usel.cli doctor"
+                      class="text-zinc-400 hover:text-zinc-900 transition-colors flex items-center gap-1 text-[11px]">
+                      <span class="material-symbols-outlined text-sm copy-icon">content_copy</span>
+                      <span class="copy-feedback hidden sm:inline">Copy</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 10: DOCUMENTATION MANUALS & FAQ -->
+      <section id="manuals" class="py-16 border-b border-slate-200 bg-slate-50/50 px-4 sm:px-6">
+        <div class="max-w-content mx-auto">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-14">
+            <a class="p-5 rounded-xl bg-white border border-slate-200 hover:border-emerald-500 transition-all group shadow-sm"
+              href="#quickstart">
+              <div
+                class="w-8 h-8 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center font-mono text-zinc-950 text-xs font-bold mb-3 group-hover:bg-emerald-50 group-hover:text-emerald-700">
+                01
+              </div>
+              <h3 class="text-sm font-bold text-zinc-950 group-hover:text-emerald-700 transition-colors">
+                Getting Started Manual
+              </h3>
+              <p class="text-xs text-zinc-600 mt-1.5 leading-relaxed">
+                Setup guide covering environment isolation, virtualenv
+                configuration, and first numerical integrals.
+              </p>
+              <div class="mt-4 font-mono text-xs text-emerald-700 font-semibold flex items-center gap-1">
+                Read manual →
+              </div>
+            </a>
+
+            <a class="p-5 rounded-xl bg-white border border-slate-200 hover:border-emerald-500 transition-all group shadow-sm"
+              href="#modules">
+              <div
+                class="w-8 h-8 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center font-mono text-zinc-950 text-xs font-bold mb-3 group-hover:bg-emerald-50 group-hover:text-emerald-700">
+                02
+              </div>
+              <h3 class="text-sm font-bold text-zinc-950 group-hover:text-emerald-700 transition-colors">
+                Complete API Reference
+              </h3>
+              <p class="text-xs text-zinc-600 mt-1.5 leading-relaxed">
+                Mathematical signatures, float tolerances, algorithmic Big-O
+                complexities, and exact matrix type specifications.
+              </p>
+              <div class="mt-4 font-mono text-xs text-emerald-700 font-semibold flex items-center gap-1">
+                Explore APIs →
+              </div>
+            </a>
+
+            <a class="p-5 rounded-xl bg-white border border-slate-200 hover:border-emerald-500 transition-all group shadow-sm"
+              href="#code">
+              <div
+                class="w-8 h-8 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center font-mono text-zinc-950 text-xs font-bold mb-3 group-hover:bg-emerald-50 group-hover:text-emerald-700">
+                03
+              </div>
+              <h3 class="text-sm font-bold text-zinc-950 group-hover:text-emerald-700 transition-colors">
+                Physics Cookbook
+              </h3>
+              <p class="text-xs text-zinc-600 mt-1.5 leading-relaxed">
+                Ready-to-run scripts for 1D quantum tunneling, coupled harmonic
+                oscillators, and spectral wave packet expansion.
+              </p>
+              <div class="mt-4 font-mono text-xs text-emerald-700 font-semibold flex items-center gap-1">
+                View recipes →
+              </div>
+            </a>
+          </div>
+
+          <!-- FAQ -->
+          <div class="max-w-3xl mx-auto">
+            <div class="text-center mb-8">
+              <h3 class="text-xl font-bold text-zinc-950">
+                Frequently Asked Questions
+              </h3>
+              <p class="text-xs text-zinc-500 mt-1 font-mono">
+                Answers regarding hardware compatibility and licensing.
+              </p>
+            </div>
+            <div class="space-y-2 font-mono text-xs">
+              <details class="group p-4 rounded-xl bg-white border border-slate-200 shadow-2xs">
+                <summary class="flex items-center justify-between cursor-pointer font-bold text-zinc-950 list-none">
+                  <span>What is USEL in one sentence?</span>
+                  <span class="text-zinc-400 group-open:rotate-180 transition-transform text-sm">↓</span>
+                </summary>
+                <p class="mt-3 font-sans text-xs text-zinc-600 leading-relaxed pt-2 border-t border-slate-100">
+                  USEL (Universal Scientific Engineering Library) is an
+                  open-source, CPU-first numerical framework designed
+                  specifically for physicists requiring deterministic simulation
+                  without bulky ML runtimes.
+                </p>
+              </details>
+
+              <details class="group p-4 rounded-xl bg-white border border-slate-200 shadow-2xs">
+                <summary class="flex items-center justify-between cursor-pointer font-bold text-zinc-950 list-none">
+                  <span>Will USEL ever require a GPU or CUDA?</span>
+                  <span class="text-zinc-400 group-open:rotate-180 transition-transform text-sm">↓</span>
+                </summary>
+                <p class="mt-3 font-sans text-xs text-zinc-600 leading-relaxed pt-2 border-t border-slate-100">
+                  No. It is an explicit architectural contract to keep the
+                  entire engine executable on standard CPU SIMD instructions
+                  (AVX-512, AVX2, NEON) so calculations remain accessible and
+                  fully portable.
+                </p>
+              </details>
+
+              <details class="group p-4 rounded-xl bg-white border border-slate-200 shadow-2xs">
+                <summary class="flex items-center justify-between cursor-pointer font-bold text-zinc-950 list-none">
+                  <span>How does USEL guarantee reproducible simulations?</span>
+                  <span class="text-zinc-400 group-open:rotate-180 transition-transform text-sm">↓</span>
+                </summary>
+                <p class="mt-3 font-sans text-xs text-zinc-600 leading-relaxed pt-2 border-t border-slate-100">
+                  We use strict IEEE-754 double precision floating-point
+                  algorithms and deterministic random number harnesses that
+                  yield bit-identical eigenvalues regardless of whether executed
+                  on macOS or Linux.
+                </p>
+              </details>
+
+              <details class="group p-4 rounded-xl bg-white border border-slate-200 shadow-2xs">
+                <summary class="flex items-center justify-between cursor-pointer font-bold text-zinc-950 list-none">
+                  <span>Is USEL free for academic and commercial use?</span>
+                  <span class="text-zinc-400 group-open:rotate-180 transition-transform text-sm">↓</span>
+                </summary>
+                <p class="mt-3 font-sans text-xs text-zinc-600 leading-relaxed pt-2 border-t border-slate-100">
+                  Yes. USEL is licensed under the permissive MIT License. You
+                  may freely use it in proprietary software, research papers,
+                  and industrial simulation pipelines.
+                </p>
+              </details>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 11: FINAL RESTRAINED CTA -->
+      <section id="final-cta" class="py-24 text-center px-4 sm:px-6 relative bg-gradient-to-b from-white to-slate-50">
+        <div class="max-w-2xl mx-auto">
+          <span
+            class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 font-mono text-xs mb-6 font-bold shadow-2xs">
+            <span>STABLE RELEASE • MIT LICENSE</span>
+          </span>
+          <h2 class="text-3xl sm:text-5xl font-bold tracking-tight text-zinc-950 leading-tight">
+            The foundation for deterministic physics.
+          </h2>
+          <p class="mt-4 text-sm sm:text-base text-zinc-600 leading-relaxed">
+            Join researchers and engineers using USEL for reproducible numerical
+            physics.
+          </p>
+          <div class="mt-8 flex flex-wrap items-center justify-center gap-3 font-mono text-xs">
+            <a id="bottom-install-btn"
+              class="px-6 py-3 rounded-full bg-emerald-600 text-white font-semibold hover:bg-emerald-700 transition-all flex items-center gap-2 shadow-sm"
+              href="#quickstart">
+              <span>INSTALL USEL v1.0</span>
+              <span class="material-symbols-outlined text-sm">terminal</span>
+            </a>
+            <a id="bottom-github-btn"
+              class="px-6 py-3 rounded-full bg-white border border-slate-200 text-zinc-800 hover:border-slate-400 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm"
+              href="https://github.com/goutam-tech/USEL" rel="noreferrer" target="_blank">
+              <span>STAR ON GITHUB</span>
+            </a>
+          </div>
+          <div class="mt-12 font-mono text-[11px] text-zinc-400">
+            pip install usel • SHA-256 Verified • No Telemetry
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer id="app-footer"
+      class="w-full bg-slate-50 border-t border-slate-200 py-10 px-4 sm:px-6 font-mono text-xs text-zinc-500">
+      <div class="max-w-content mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+        <div class="flex items-center gap-3">
+          <div
+            class="w-5 h-5 rounded bg-emerald-100 border border-emerald-200 flex items-center justify-center font-mono text-[10px] text-emerald-800 font-bold">
+            ψ
+          </div>
+          <span class="text-zinc-950 font-bold tracking-wider">USEL</span>
+          <span class="text-slate-300">|</span>
+          <span class="text-zinc-600">Scientific computing. Built for physics.</span>
+        </div>
+        <div class="flex items-center gap-6 text-[11px] font-medium text-zinc-600">
+          <a class="hover:text-black transition-colors" href="https://github.com/goutam-tech/USEL" rel="noreferrer"
+            target="_blank">GitHub</a>
+          <a class="hover:text-black transition-colors" href="#pipeline">Architecture</a>
+          <a class="hover:text-black transition-colors" href="#quickstart">Quickstart</a>
+          <a class="hover:text-black transition-colors" href="#roadmap">Roadmap</a>
+        </div>
+        <div class="text-[11px] text-zinc-400">
+          MIT License • Host CPU Native
+        </div>
+      </div>
+    </footer>
+
+    <!-- Native Vanilla JS Application Logic (No frameworks used) -->
+    <script src="main.js"></script>
+</body>
+
+</html>
