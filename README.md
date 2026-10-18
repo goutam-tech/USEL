@@ -245,23 +245,23 @@ uv run python example/black_scholes/example_three_way_validation.py
 from usel.math import Matrix, fft, ifft, frequency_analysis
 
 # Matrix creation
-Matrix([[1, 2], [3, 4]])           # from nested list
-Matrix.identity(3)                  # identity matrix
-Matrix.random(4, 4, seed=42)        # reproducible random matrix
-Matrix.zeros(3, 3)                  # zero matrix
+Matrix([[1, 2], [3, 4]])  # from nested list
+Matrix.identity(3)  # identity matrix
+Matrix.random(4, 4, seed=42)  # reproducible random matrix
+Matrix.zeros(3, 3)  # zero matrix
 
 # Algebra
-a @ b                               # matrix multiplication
-a.T                                 # transpose
-a.determinant()                     # determinant
-a.trace()                           # trace
-a.inverse()                         # inverse (raises MatrixError if singular)
-a.norm()                            # Frobenius norm
+a @ b  # matrix multiplication
+a.T  # transpose
+a.determinant()  # determinant
+a.trace()  # trace
+a.inverse()  # inverse (raises MatrixError if singular)
+a.norm()  # Frobenius norm
 
 # FFT
-fft(signal)                         # forward FFT
-ifft(spectrum)                      # inverse FFT
-frequency_analysis(signal, sr)      # returns (frequencies, magnitudes)
+fft(signal)  # forward FFT
+ifft(spectrum)  # inverse FFT
+frequency_analysis(signal, sr)  # returns (frequencies, magnitudes)
 ```
 
 ### `usel.linalg` — Decompositions
@@ -271,20 +271,29 @@ from usel.math import Matrix
 
 m = Matrix([[4, 1], [2, 3]])
 
-values = eigenvalues(m)                      # eigenvalues only
-values, vectors = eigenvectors(m)            # eigenvalues + eigenvectors
-U, S, Vt = svd(m)                            # singular value decomposition
-Q, R = qr(m)                                 # QR decomposition
-L, U = lu(m)                                 # LU decomposition
-L = cholesky(m)                              # Cholesky (requires SPD matrix)
+values = eigenvalues(m)  # eigenvalues only
+values, vectors = eigenvectors(m)  # eigenvalues + eigenvectors
+U, S, Vt = svd(m)  # singular value decomposition
+Q, R = qr(m)  # QR decomposition
+L, U = lu(m)  # LU decomposition
+L = cholesky(m)  # Cholesky (requires SPD matrix)
 ```
 
 ### `usel.solvers` — Root Finding, ODEs, Integration
 ```python
 from usel.solvers import (
-    newton, bisection, secant, fixed_point, gradient_descent,
-    euler, improved_euler, rk2, rk4,
-    trapezoidal, simpson, gaussian_quadrature
+    newton,
+    bisection,
+    secant,
+    fixed_point,
+    gradient_descent,
+    euler,
+    improved_euler,
+    rk2,
+    rk4,
+    trapezoidal,
+    simpson,
+    gaussian_quadrature,
 )
 
 # Root finding
@@ -302,13 +311,19 @@ val = gaussian_quadrature(f, a, b, n=10)
 
 ### `usel.random` — Reproducible Random Generation
 ```python
-from usel.random import random_matrix, random_vector, gaussian_numbers, uniform_numbers, random_state
+from usel.random import (
+    random_matrix,
+    random_vector,
+    gaussian_numbers,
+    uniform_numbers,
+    random_state,
+)
 
-m = random_matrix(3, 3, seed=42)           # 3x3 random matrix
-v = random_vector(5, seed=42)              # length-5 random vector
+m = random_matrix(3, 3, seed=42)  # 3x3 random matrix
+v = random_vector(5, seed=42)  # length-5 random vector
 nums = gaussian_numbers(100, mean=0, std=1, seed=42)
 nums = uniform_numbers(100, low=0, high=1, seed=42)
-state = random_state(seed=42)              # get/set NumPy random state
+state = random_state(seed=42)  # get/set NumPy random state
 ```
 
 ### `usel.utils` — Timing, Profiling, Validation, Precision
@@ -322,12 +337,15 @@ with Timer() as t:
     result = expensive_computation()
 print(f"Took {t.elapsed:.4f} seconds")
 
+
 @timeit
 def my_function(): ...
+
 
 # Profiling
 @profile
 def my_function(): ...
+
 
 mem_mb = memory_usage_mb()
 
@@ -355,7 +373,16 @@ save_config(config, "output.toml")
 
 ### `usel.io` — File I/O
 ```python
-from usel.io import read_csv, write_csv, read_json, write_json, read_npy, write_npy, read_text, write_text
+from usel.io import (
+    read_csv,
+    write_csv,
+    read_json,
+    write_json,
+    read_npy,
+    write_npy,
+    read_text,
+    write_text,
+)
 
 # CSV
 df = read_csv("data.csv")
@@ -394,8 +421,13 @@ perf.stop("operation")
 ### `usel.exceptions` — Typed Exceptions
 ```python
 from usel.exceptions import (
-    uselError, MatrixError, SolverError, ConfigError,
-    ValidationError, IOError_, PhysicsError
+    uselError,
+    MatrixError,
+    SolverError,
+    ConfigError,
+    ValidationError,
+    IOError_,
+    PhysicsError,
 )
 
 try:
@@ -420,8 +452,10 @@ usel test tests/src/solvers  # Run specific test path
 ### `usel.schrodinger` — 1D Schrödinger Equation
 ```python
 from usel.schrodinger import (
-    SchrodingerSolver, gaussian_wavepacket,
-    build_hamiltonian, solve_energy_levels
+    SchrodingerSolver,
+    gaussian_wavepacket,
+    build_hamiltonian,
+    solve_energy_levels,
 )
 from usel.schrodinger.grids import SpatialGrid
 from usel.schrodinger.operators import kinetic_energy_operator, momentum_operator, position_operator
@@ -433,14 +467,14 @@ solver = SchrodingerSolver(grid.x, V)
 
 # Bound states
 result = solver.eigenstates(n_states=5)
-result.energies          # array of eigenvalues
-result.eigenstates       # eigenvectors as columns
+result.energies  # array of eigenvalues
+result.eigenstates  # eigenvectors as columns
 
 # Time-dependent evolution
 psi0 = gaussian_wavepacket(grid.x, x0=-2, sigma=0.5, k0=3)
 td_result = solver.solve_time_dependent(psi0, t_end=5.0, dt=0.01)
-td_result.psi            # wavefunction at each time step
-td_result.norm           # norm at each time step (conservation check)
+td_result.psi  # wavefunction at each time step
+td_result.norm  # norm at each time step (conservation check)
 td_result.expectation_x(i)  # <x> at time index i
 td_result.expectation_p(i)  # <p> at time index i
 
@@ -468,17 +502,18 @@ solver = DiracSolver(x, V, mass=1.0, c=1.0, hbar=1.0)
 
 # Time evolution (4-component spinor)
 import numpy as np
+
 psi0 = np.zeros((4, len(x)), dtype=complex)
 # Create a Gaussian wave packet in the upper components
-psi0[0, :] = np.exp(-(x + 3)**2 / (2 * 0.5**2)) * np.exp(1j * 2.0 * x)
-psi0[1, :] = np.exp(-(x + 3)**2 / (2 * 0.5**2)) * np.exp(1j * 2.0 * x) * 0.1
-psi0 = psi0 / np.sqrt(np.sum(np.abs(psi0)**2) * grid.dx)
+psi0[0, :] = np.exp(-((x + 3) ** 2) / (2 * 0.5**2)) * np.exp(1j * 2.0 * x)
+psi0[1, :] = np.exp(-((x + 3) ** 2) / (2 * 0.5**2)) * np.exp(1j * 2.0 * x) * 0.1
+psi0 = psi0 / np.sqrt(np.sum(np.abs(psi0) ** 2) * grid.dx)
 
 td_result = solver.solve(psi0, t_end=2.0, dt=0.005)
-td_result.spinor       # shape (steps+1, 4, N)
+td_result.spinor  # shape (steps+1, 4, N)
 td_result.probability  # probability density at each step
-td_result.t            # time points
-td_result.x            # spatial grid
+td_result.t  # time points
+td_result.x  # spatial grid
 
 # Low-level
 g0, g1, g2, g3 = gamma_matrices_dirac()
@@ -492,14 +527,15 @@ from usel.maxwell.constants import EPSILON_0, MU_0, C_LIGHT
 
 # Symbolic fields (SymPy-based)
 from usel.maxwell.core import N
+
 x, y, z = N.x, N.y, N.z
 
 # Point charge field
-E = (q / (4*sp.pi*EPSILON_0)) * (x*N.i + y*N.j + z*N.k) / (x**2 + y**2 + z**2)**(3/2)
+E = (q / (4 * sp.pi * EPSILON_0)) * (x * N.i + y * N.j + z * N.k) / (x**2 + y**2 + z**2) ** (3 / 2)
 residual, ok = core.gauss_law_electric(E, rho=0, epsilon0=EPSILON_0)
 
 # Potentials
-A = (-B0*y/2)*N.i + (B0*x/2)*N.j
+A = (-B0 * y / 2) * N.i + (B0 * x / 2) * N.j
 B = potentials.B_from_potentials(A)
 
 # Materials
@@ -513,12 +549,25 @@ R, T = boundary.reflection_transmission_coefficients(eps1, mu1, eps2, mu2, theta
 ### `usel.black_scholes` — Option Pricing
 ```python
 from usel.black_scholes import (
-    call_price, put_price,
-    delta_call, delta_put, gamma, vega, theta_call, theta_put, rho_call, rho_put,
-    implied_volatility_call, implied_volatility_put,
-    verify_put_call_parity, put_from_call, call_from_put,
-    finite_difference_call_price, finite_difference_put_price,
-    monte_carlo_call_price, monte_carlo_put_price
+    call_price,
+    put_price,
+    delta_call,
+    delta_put,
+    gamma,
+    vega,
+    theta_call,
+    theta_put,
+    rho_call,
+    rho_put,
+    implied_volatility_call,
+    implied_volatility_put,
+    verify_put_call_parity,
+    put_from_call,
+    call_from_put,
+    finite_difference_call_price,
+    finite_difference_put_price,
+    monte_carlo_call_price,
+    monte_carlo_put_price,
 )
 
 # Analytical pricing (positional args: stock, strike, rate, vol, time, div_yield=0)
