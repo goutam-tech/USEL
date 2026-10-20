@@ -119,18 +119,3 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "${{ needs.details.outputs.tag_name }}" dist/* --title "${{ needs.details.outputs.tag_name }}" --generate-notes
-  bump_homebrew_formula:
-    needs: [details,github_release,pypi_publish]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: peter-evans/repository-dispatch@v3
-        with:
-          token: ${{ secrets.BREW_TAP_TOKEN }}
-          repository: ${{ env.OWNER }}/${{ env.TAP_NAME }}
-          event-type: update-formula
-          client-payload: >-
-            {
-              "formula_version":"${{ needs.details.outputs.new_version }}",
-              "formula_name":"${{ env.PACKAGE_NAME }}",
-              "formula_url":"https://github.com/${{ env.OWNER }}/${{ env.PACKAGE_NAME }}/releases/download/${{ needs.details.outputs.tag_name }}/${{ env.PACKAGE_NAME }}-${{ needs.details.outputs.new_version }}.tar.gz"
-            }
