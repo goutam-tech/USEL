@@ -722,6 +722,35 @@ uv run pytest tests/src/schrodinger/
 uv run pytest -v
 ```
 
+The suite includes a numerical-correctness baseline that validates core scientific
+methods (linear algebra, FFT, quadrature, decompositions) against analytical
+solutions with justified tolerances, plus boundary/invalid-input cases. These tests
+are deterministic, run on CPU only, and require no network access.
+
+## Benchmarking
+
+Reproducible CPU and memory benchmarks live in ``benchmarks/`` and cover
+implemented functionality only (matrix multiplication, FFT, ODE integration,
+quadrature, root finding, Black-Scholes pricing, SVD). They record runtime and
+peak memory across repeated runs, report median and spread, and export JSON/CSV
+with environment metadata (Python, platform, CPU, dependency versions).
+
+```bash
+# Run every benchmark and write results.json / results.csv
+uv run python benchmarks/bench_suite.py --out benchmark_results
+
+# Run a single workload
+uv run python benchmarks/bench_suite.py --workload fft --repeats 10
+
+# Re-run to confirm the report tolerates normal timing variation
+uv run python benchmarks/bench_suite.py --out benchmark_results --repeats 5
+```
+
+Benchmarks are kept separate from the correctness test suite and use no strict
+timing thresholds, so they never block CI. Numbers depend on hardware, software
+versions, and system load — no performance claim is made unless directly
+supported by a recorded, reproducible measurement.
+
 ---
 
 ## Contributing
