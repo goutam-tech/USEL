@@ -112,3 +112,70 @@ def test_fixed_point_non_convergent_map_reports_failure():
     result = fixed_point(g=lambda x: 2 * x, x0=1.0, max_iter=10)
     assert not result.converged
     assert result.iterations == 10
+
+
+def test_solver_result_residual_defaults_to_none():
+    result = SolverResult(root=1.0, iterations=1, converged=True, history=[1.0])
+    assert result.residual is None
+
+
+def test_newton_residual_is_small_at_converged_root():
+    result = newton(f=lambda x: x**2 - 2, df=lambda x: 2 * x, x0=1.0)
+    assert result.residual is not None
+    assert abs(result.residual) < 1e-8
+    assert result.residual == pytest.approx(abs(result.root**2 - 2), abs=1e-12)
+
+
+def test_bisection_residual_is_small_at_converged_root():
+    result = bisection(f=lambda x: x**2 - 2, a=0.0, b=2.0)
+    assert result.residual is not None
+    assert abs(result.residual) < 1e-8
+    assert result.residual == pytest.approx(abs(result.root**2 - 2), abs=1e-12)
+
+
+def test_secant_residual_is_small_at_converged_root():
+    result = secant(f=lambda x: x**2 - 2, x0=1.0, x1=2.0)
+    assert result.residual is not None
+    assert abs(result.residual) < 1e-8
+    assert result.residual == pytest.approx(abs(result.root**2 - 2), abs=1e-12)
+
+
+def test_gradient_descent_residual_is_small_at_converged_root():
+    result = gradient_descent(df=lambda x: 2 * (x - 3), x0=0.0, learning_rate=0.1)
+    assert result.residual is not None
+    assert abs(result.residual) < 1e-8
+    assert result.residual == pytest.approx(abs(2 * (result.root - 3)), abs=1e-12)
+
+
+def test_fixed_point_residual_is_small_at_converged_root():
+    result = fixed_point(g=math.cos, x0=0.5)
+    assert result.residual is not None
+    assert abs(result.residual) < 1e-8
+    assert result.residual == pytest.approx(abs(math.cos(result.root) - result.root), abs=1e-12)
+
+
+def test_newton_non_converged_has_finite_residual():
+    result = newton(f=lambda x: x**2 - 2, df=lambda x: 2 * x, x0=1000.0, max_iter=1)
+    assert not result.converged
+    assert result.residual is not None
+    assert result.residual == pytest.approx(abs(result.root**2 - 2), abs=1e-12)
+
+
+def test_iterations_count_matches_history_length():
+    result = newton(f=lambda x: x**2 - 2, df=lambda x: 2 * x, x0=1.0)
+    assert len(result.history) == result.iterations + 1
+
+    result = bisection(f=lambda x: x**2 - 2, a=0.0, b=2.0)
+    assert len(result.history) == result.iterations
+
+    result = secant(f=lambda x: x**2 - 2, x0=1.0, x1=2.0)
+    assert len(result.history) == result.iterations + 2
+
+
+def test_converged_distinguishes_success_from_iteration_limit():
+    converged = newton(f=lambda x: x**2 - 2, df=lambda x: 2 * x, x0=1.0)
+    assert converged.converged is True
+
+    not_converged = newton(f=lambda x: x**2 - 2, df=lambda x: 2 * x, x0=1000.0, max_iter=1)
+    assert not_converged.converged is False
+    assert not_converged.iterations == 1

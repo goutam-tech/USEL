@@ -751,7 +751,62 @@ timing thresholds, so they never block CI. Numbers depend on hardware, software
 versions, and system load — no performance claim is made unless directly
 supported by a recorded, reproducible measurement.
 
+## Solver Diagnostics
+
+USEL exposes convergence and termination diagnostics for its root-finding
+solvers through the structured :class:`usel.solvers.root_finding.SolverResult`
+return type. ODE and integration solvers are fixed-step / single-evaluation
+methods with no convergence criterion, so their diagnostics are limited to
+step count and completion status.
+
+### Root-finding solvers
+
+``newton``, ``bisection``, ``secant``, ``gradient_descent``, and
+``fixed_point`` all return :class:`SolverResult` with these fields:
+
+* ``root`` — approximate root or minimizer (float).
+* ``iterations`` — number of iterations performed before termination (int).
+* ``converged`` — ``True`` when the tolerance was met before ``max_iter``,
+  ``False`` when the iteration limit was reached (bool).
+* ``history`` — sequence of iterates starting with the initial guess
+  (list[float]).
+* ``residual`` — absolute value of the defining equation at ``root``
+  (``|f(root)|`` for root finding, ``|df(root)|`` for gradient descent,
+  ``|g(root) - root|`` for fixed-point iteration). Finite and meaningful
+  whenever the algorithm defines it (float or ``None``).
+
+Termination status is distinguished as follows:
+
+* Successful convergence — ``converged=True``.
+* Iteration limit reached — ``converged=False`` with ``iterations == max_iter``.
+* Invalid input — raises :class:`usel.exceptions.SolverError` (e.g. same-sign
+  bracket for bisection).
+* Numerical breakdown — raises :class:`usel.exceptions.SolverError` (e.g. zero
+  derivative for Newton, zero denominator for secant).
+
+No convergence guarantees or error bounds are claimed beyond what the
+underlying algorithm establishes.
+
+### ODE solvers
+
+``euler``, ``improved_euler``, ``rk2``, and ``rk4`` are fixed-step methods
+that always run every step from ``t0`` to ``t_end``. They return ``(t, y)``
+tuples; the step count is ``len(t) - 1`` and termination status is always
+completed. No convergence criterion or residual is defined by these algorithms.
+
+### Integration solvers
+
+``trapezoidal``, ``simpson``, and ``gaussian_quadrature`` perform a single
+deterministic evaluation and return a float. The subinterval count is ``n``
+(``simpson`` promotes odd ``n`` to the next even number). No convergence
+criterion or residual is defined by these algorithms.
+
+Backward compatibility: existing solver return types and default behavior are
+unchanged. The ``residual`` field on :class:`SolverResult` defaults to
+``None`` for code that constructs it directly.
+
 ---
+
 
 ## Contributing
 
