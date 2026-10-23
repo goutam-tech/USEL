@@ -115,7 +115,7 @@ def workload_fft():
 
 
 def workload_ode_rk4():
-    def decay(t, y):
+    def decay(_t, y):
         return -y
 
     def run():

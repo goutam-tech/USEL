@@ -222,7 +222,7 @@ def _infinite_well_solver(L: float = 1.0, n_points: int = 2000, barrier: float =
 
 
 def test_infinite_well_energies_match_analytical():
-    solver, x = _infinite_well_solver(L=1.0, n_points=1000)
+    solver, _x = _infinite_well_solver(L=1.0, n_points=1000)
     result = solver.eigenstates(n_states=5)
     for n in range(1, 6):
         analytical = n**2 * np.pi**2 / 2.0
@@ -242,7 +242,7 @@ def test_infinite_well_energies_positive_and_ordered():
 
 def test_infinite_well_boundary_behavior():
     """Eigenstates should vanish at the hard walls (x = 0 and x = L)."""
-    solver, x = _infinite_well_solver(L=1.0, n_points=1000)
+    solver, _x = _infinite_well_solver(L=1.0, n_points=1000)
     result = solver.eigenstates(n_states=3)
     for i in range(3):
         psi = result.eigenstates[:, i]

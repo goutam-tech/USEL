@@ -118,6 +118,7 @@ class TestMatrix:
 
         assert result.shape == (2, 2)
 
+    @staticmethod
     def test_determinant_known_values(self):
         # 2x2: det = ad - bc = 1*4 - 2*3 = -2
         assert Matrix([[1, 2], [3, 4]]).determinant() == pytest.approx(-2)
@@ -126,15 +127,18 @@ class TestMatrix:
         m = Matrix([[1, 2, 3], [0, 4, 5], [1, 0, 6]])
         assert m.determinant() == pytest.approx(22)
 
+    @staticmethod
     def test_determinant_singular_is_zero(self):
         # Rows are proportional, so the determinant must be exactly 0.
         m = Matrix([[1, 2], [2, 4]])
         assert m.determinant() == pytest.approx(0.0)
 
+    @staticmethod
     def test_determinant_non_square_raises(self):
         with pytest.raises(MatrixError):
             Matrix.zeros(2, 3).determinant()
 
+    @staticmethod
     def test_inverse_round_trip(self):
         for m in [
             Matrix([[4, 7], [2, 6]]),
@@ -145,14 +149,17 @@ class TestMatrix:
             result = m @ inv
             assert np.allclose(result.data, np.eye(m.rows), atol=1e-10)
 
+    @staticmethod
     def test_inverse_singular_raises(self):
         with pytest.raises(MatrixError):
             Matrix([[1, 2], [2, 4]]).inverse()
 
+    @staticmethod
     def test_inverse_non_square_raises(self):
         with pytest.raises(MatrixError):
             Matrix.zeros(2, 3).inverse()
 
+    @staticmethod
     def test_inverse_known_2x2(self):
         # A = [[4, 7], [2, 6]], det = 10, inv = 1/10 * [[6, -7], [-2, 4]]
         m = Matrix([[4, 7], [2, 6]])
@@ -160,6 +167,7 @@ class TestMatrix:
         expected = Matrix([[0.6, -0.7], [-0.2, 0.4]])
         assert np.allclose(inv.data, expected.data, atol=1e-10)
 
+    @staticmethod
     def test_eigenvalue_eigenvector_residual(self):
         # A @ v = lambda * v must hold for every eigenpair.
         m = Matrix([[2, 1], [1, 2]])  # eigenvalues 3 and 1
@@ -168,6 +176,7 @@ class TestMatrix:
             residual = m.data @ vec - lam * vec
             assert np.allclose(residual, 0.0, atol=1e-10)
 
+    @staticmethod
     def test_svd_reconstruction(self):
         # U @ diag(s) @ Vt must reconstruct the original matrix.
         m = Matrix([[1, 2], [3, 4]])
@@ -175,6 +184,7 @@ class TestMatrix:
         reconstructed = u.data @ np.diag(s) @ vt.data
         assert np.allclose(reconstructed, m.data, atol=1e-10)
 
+    @staticmethod
     def test_lu_reconstruction(self):
         # P @ L @ U must reconstruct the original matrix.
         m = Matrix([[4, 3], [6, 3]])
@@ -182,6 +192,7 @@ class TestMatrix:
         reconstructed = p.data @ L.data @ u.data
         assert np.allclose(reconstructed, m.data, atol=1e-10)
 
+    @staticmethod
     def test_cholesky_reconstruction(self):
         # L @ L.T must reconstruct the original SPD matrix.
         m = Matrix([[4, 2], [2, 3]])
@@ -189,10 +200,12 @@ class TestMatrix:
         reconstructed = L.data @ L.data.T
         assert np.allclose(reconstructed, m.data, atol=1e-10)
 
+    @staticmethod
     def test_cholesky_non_spd_raises(self):
         with pytest.raises(MatrixError):
             Matrix([[1, 2], [3, 4]]).decompose_cholesky()
 
+    @staticmethod
     def test_norm_known_values(self):
         # Frobenius norm of [[3, 4]] = sqrt(9 + 16) = 5
         assert Matrix([[3, 4]]).norm() == pytest.approx(5)

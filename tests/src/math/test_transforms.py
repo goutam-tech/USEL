@@ -53,12 +53,14 @@ class TestTransforms:
         with pytest.raises(ValidationError):
             frequency_analysis(signal, sample_rate=10)
 
+    @staticmethod
     def test_fft_matches_analytical_dft(self):
         # The DFT of a delta [1, 0, 0, 0] is the all-ones vector.
         signal = np.array([1.0, 0.0, 0.0, 0.0])
         result = fft(signal)
         assert np.allclose(result, np.array([1.0, 1.0, 1.0, 1.0]), atol=1e-12)
 
+    @staticmethod
     def test_fft_of_sinusoid_peaks_at_correct_bin(self):
         # A sine at exactly one FFT bin should concentrate its energy there.
         n = 64
@@ -72,6 +74,7 @@ class TestTransforms:
         # DC bin of a pure sine is ~zero.
         assert magnitudes[0] < 1e-10
 
+    @staticmethod
     def test_frequency_analysis_reports_peak_frequency(self):
         signal = np.sin(2 * np.pi * 7 * np.linspace(0, 1, 1000, endpoint=False))
         freq, magnitude = frequency_analysis(signal, sample_rate=1000)
