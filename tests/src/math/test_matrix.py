@@ -27,14 +27,12 @@ class TestMatrix:
         assert np.array_equal(m.data, np.eye(3))
 
     def test_random_matrix(self):
-
         m1 = Matrix.random(3, 3, seed=1)
         m2 = Matrix.random(3, 3, seed=1)
 
         assert m1 == m2
 
     def test_matrix_addition(self):
-
         a = Matrix([[1, 2], [3, 4]])
 
         b = Matrix([[5, 6], [7, 8]])
@@ -46,7 +44,6 @@ class TestMatrix:
         assert result == expected
 
     def test_matrix_subtraction(self):
-
         a = Matrix([[5, 6], [7, 8]])
 
         b = Matrix([[1, 2], [3, 4]])
@@ -58,7 +55,6 @@ class TestMatrix:
         assert result == expected
 
     def test_matrix_multiplication(self):
-
         a = Matrix([[1, 2], [3, 4]])
 
         b = Matrix([[5, 6], [7, 8]])
@@ -70,7 +66,6 @@ class TestMatrix:
         assert result == expected
 
     def test_invalid_multiplication(self):
-
         a = Matrix.zeros(2, 3)
 
         b = Matrix.zeros(4, 2)
@@ -79,7 +74,6 @@ class TestMatrix:
             a @ b
 
     def test_transpose(self):
-
         m = Matrix([[1, 2, 3], [4, 5, 6]])
 
         t = m.T
@@ -87,19 +81,16 @@ class TestMatrix:
         assert t.shape == (3, 2)
 
     def test_determinant(self):
-
         m = Matrix([[1, 2], [3, 4]])
 
         assert m.determinant() == pytest.approx(-2)
 
     def test_trace(self):
-
         m = Matrix([[1, 2], [3, 4]])
 
         assert m.trace() == 5
 
     def test_inverse(self):
-
         m = Matrix([[4, 7], [2, 6]])
 
         inv = m.inverse()
@@ -109,13 +100,11 @@ class TestMatrix:
         assert np.allclose(result.data, np.eye(2))
 
     def test_norm(self):
-
         m = Matrix([[3, 4]])
 
         assert m.norm() == pytest.approx(5)
 
     def test_eigenvalues(self):
-
         m = Matrix([[2, 0], [0, 3]])
 
         values = m.eigenvalues()
@@ -123,7 +112,6 @@ class TestMatrix:
         assert sorted(values) == [2, 3]
 
     def test_cholesky(self):
-
         m = Matrix([[4, 2], [2, 3]])
 
         result = m.decompose_cholesky()
