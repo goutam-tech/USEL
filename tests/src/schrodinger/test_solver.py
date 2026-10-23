@@ -203,3 +203,97 @@ def test_probability_current_nonzero_for_moving_wavepacket():
     current = solver.probability_current(psi.astype(complex))
     core = slice(200, 300)
     assert np.mean(current[core]) > 0
+
+
+# ----------------------------------------------------------------------
+# Infinite square well validation (SCRUM-9)
+# ----------------------------------------------------------------------
+# For an infinite well of width L with V=0 inside and hard walls outside,
+# the analytical energies are E_n = n^2 * pi^2 * hbar^2 / (2 * m * L^2).
+# Since np.inf on the Hamiltonian diagonal breaks the sparse eigensolver,
+# we approximate the infinite well with a large finite barrier (1e10).
+# This is the same approach used in the particle-in-box example.
+
+
+def _infinite_well_solver(L: float = 1.0, n_points: int = 2000, barrier: float = 1e10):
+    x = np.linspace(0.0, L, n_points)
+    V = np.where((x > 0.0) & (x < L), 0.0, barrier)
+    return SchrodingerSolver(x, V, mass=1.0), x
+
+
+def test_infinite_well_energies_match_analytical():
+    solver, _x = _infinite_well_solver(L=1.0, n_points=1000)
+    result = solver.eigenstates(n_states=5)
+    for n in range(1, 6):
+        analytical = n**2 * np.pi**2 / 2.0
+        computed = result.energies[n - 1]
+        # Finite-difference discretisation error; justify tolerance.
+        assert computed == pytest.approx(analytical, rel=2e-2), (
+            f"n={n}: computed={computed:.6f}, analytical={analytical:.6f}"
+        )
+
+
+def test_infinite_well_energies_positive_and_ordered():
+    solver, _ = _infinite_well_solver(L=1.0, n_points=1000)
+    result = solver.eigenstates(n_states=5)
+    assert np.all(result.energies > 0)
+    assert np.all(np.diff(result.energies) > 0)
+
+
+def test_infinite_well_boundary_behavior():
+    """Eigenstates should vanish at the hard walls (x = 0 and x = L)."""
+    solver, _x = _infinite_well_solver(L=1.0, n_points=1000)
+    result = solver.eigenstates(n_states=3)
+    for i in range(3):
+        psi = result.eigenstates[:, i]
+        # First and last interior points adjacent to walls should be ~0.
+        # Finite barrier (1e10 instead of true infinity) allows slight penetration.
+        assert abs(psi[1]) < 5e-2, f"n={i + 1}: psi near left wall = {psi[1]}"
+        assert abs(psi[-2]) < 5e-2, f"n={i + 1}: psi near right wall = {psi[-2]}"
+
+
+def test_infinite_well_eigenstates_orthogonal():
+    solver, x = _infinite_well_solver(L=1.0, n_points=1000)
+    result = solver.eigenstates(n_states=5)
+    dx = x[1] - x[0]
+    for i in range(5):
+        for j in range(i + 1, 5):
+            overlap = np.sum(np.conj(result.eigenstates[:, i]) * result.eigenstates[:, j]) * dx
+            assert abs(overlap) < 1e-2, f"Overlap between states {i + 1} and {j + 1}: {overlap}"
+
+
+def test_infinite_well_energy_scales_with_inverse_length_squared():
+    """E_n proportional to 1/L^2."""
+    solver_L1, _ = _infinite_well_solver(L=1.0, n_points=1000)
+    solver_L2, _ = _infinite_well_solver(L=2.0, n_points=1000)
+    r1 = solver_L1.eigenstates(n_states=1)
+    r2 = solver_L2.eigenstates(n_states=1)
+    # Doubling L should quarter the ground-state energy.
+    assert r2.energies[0] == pytest.approx(r1.energies[0] / 4.0, rel=1e-1)
+
+
+def test_infinite_well_energy_scales_with_inverse_mass():
+    """E_n proportional to 1/m."""
+    solver_m1, _ = _infinite_well_solver(L=1.0, n_points=1000)
+    solver_m2 = SchrodingerSolver(solver_m1.x, solver_m1.potential, mass=2.0)
+    r1 = solver_m1.eigenstates(n_states=1)
+    r2 = solver_m2.eigenstates(n_states=1)
+    assert r2.energies[0] == pytest.approx(r1.energies[0] / 2.0, rel=1e-1)
+
+
+def test_infinite_well_converges_with_grid_refinement():
+    """Energy error should decrease as grid resolution increases."""
+    solver_coarse, _ = _infinite_well_solver(L=1.0, n_points=500)
+    solver_fine, _ = _infinite_well_solver(L=1.0, n_points=1000)
+    analytical = np.pi**2 / 2.0
+    e_coarse = solver_coarse.eigenstates(n_states=1).energies[0]
+    e_fine = solver_fine.eigenstates(n_states=1).energies[0]
+    err_coarse = abs(e_coarse - analytical)
+    err_fine = abs(e_fine - analytical)
+    assert err_fine < err_coarse, f"Refinement did not reduce error: {err_coarse} -> {err_fine}"
+
+
+def test_infinite_well_rejects_n_states_too_large():
+    solver, _ = _infinite_well_solver(L=1.0, n_points=10)
+    with pytest.raises(SolverError):
+        solver.eigenstates(n_states=25)
