@@ -1,0 +1,10 @@
+
+cff-version: 1.2.0
+message: "If you use USEL in academic work, please cite this software."
+title: "USEL: Unified Scientific Equation Library"
+authors:
+  - name: "Goutam Parashuram Gotur"
+  - name: "K R Raaghavindhra"
+type: software
+repository-code: "https://github.com/goutam-tech/usel"
+license: MIT
