@@ -807,6 +807,31 @@ unchanged. The ``residual`` field on :class:`SolverResult` defaults to
 
 ---
 
+## Dependency & Security Checks
+
+USEL audits its declared dependencies for known vulnerabilities using
+``pip-audit`` (installed as a development dependency). The advisory database
+is fetched from the Python Packaging Advisory Database, so the check requires
+network access and its results are only as current as the database.
+
+Run locally:
+
+```bash
+uv sync --group dev
+uv run pip-audit --desc on
+```
+
+CI runs the same check on every push and pull request. A clean scan exits
+with code 0; actionable vulnerability findings exit with code 1 and block
+the run. Tool or network failures (unable to reach the advisory database)
+are treated as scan errors, not as clean results — they are visible and
+actionable in CI logs.
+
+No secrets or credentials are scanned or exposed. Dependency updates are
+justified and validated rather than applied as blind bulk upgrades.
+
+---
+
 
 ## Contributing
 
