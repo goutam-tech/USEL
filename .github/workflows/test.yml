@@ -44,9 +44,6 @@ jobs:
       - name: Install dependencies
         run: uv sync --group dev
 
-      - name: Check formatting (Black)
-        run: uv run black --check .
-
       - name: Check formatting (Ruff)
         run: uv run ruff format --check .
 

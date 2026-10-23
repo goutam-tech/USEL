@@ -228,9 +228,9 @@ def test_infinite_well_energies_match_analytical():
         analytical = n**2 * np.pi**2 / 2.0
         computed = result.energies[n - 1]
         # Finite-difference discretisation error; justify tolerance.
-        assert computed == pytest.approx(
-            analytical, rel=2e-2
-        ), f"n={n}: computed={computed:.6f}, analytical={analytical:.6f}"
+        assert computed == pytest.approx(analytical, rel=2e-2), (
+            f"n={n}: computed={computed:.6f}, analytical={analytical:.6f}"
+        )
 
 
 def test_infinite_well_energies_positive_and_ordered():
