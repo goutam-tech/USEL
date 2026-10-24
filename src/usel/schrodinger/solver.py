@@ -176,11 +176,14 @@ class SchrodingerSolver:
         t_end: float,
         dt: float,
     ) -> TimeDependentResult:
-        """Propagate an initial state using the Crank–Nicolson method.
+        """Propagate an initial state using the sparse Crank–Nicolson method.
 
         The propagator is:
 
             ψ(t+dt) = (I + i dt H / (2ℏ))⁻¹ (I − i dt H / (2ℏ)) ψ(t)
+
+        Sparse matrices and a reusable sparse LU factorization reduce memory
+        usage and computational cost for the finite-difference Hamiltonian.
 
         Parameters
         ----------
@@ -194,6 +197,7 @@ class SchrodingerSolver:
         Returns
         -------
         TimeDependentResult
+            Wavefunction and probability histories over the simulation.
         """
         if dt <= 0:
             raise ValidationError("Time step dt must be positive")
@@ -205,28 +209,59 @@ class SchrodingerSolver:
         n_steps = int(round(t_end / dt))
         n_grid = len(self._x)
 
-        H = _build_hamiltonian(self._x, self._potential, self._hbar, self._mass)
+        H = _build_hamiltonian_sparse(
+            self._x,
+            self._potential,
+            self._hbar,
+            self._mass,
+        )
 
-        # Crank-Nicolson matrices
-        A = np.eye(n_grid) + 0.5j * dt / self._hbar * H
-        B = np.eye(n_grid) - 0.5j * dt / self._hbar * H
+        # Crank–Nicolson matrices.
+        identity = diags(
+            np.ones(n_grid, dtype=np.complex128),
+            offsets=0,
+            shape=(n_grid, n_grid),
+            format="csc",
+        )
 
-        # Pre-compute LU factorisation for efficiency
-        from scipy.linalg import lu_factor, lu_solve
+        factor = 0.5j * dt / self._hbar
+        A = (identity + factor * H).tocsc()
+        B = (identity - factor * H).tocsr()
 
-        A_lu = lu_factor(A)
+        # Factorize A once and reuse the factorization at every time step.
+        from scipy.sparse.linalg import splu
+
+        try:
+            A_lu = splu(A)
+        except Exception as exc:
+            raise SolverError(
+                f"Crank–Nicolson sparse factorization failed: {exc}"
+            ) from exc
 
         psi = psi0.astype(np.complex128).copy()
 
-        psi_history = np.empty((n_steps + 1, n_grid), dtype=np.complex128)
-        prob_history = np.empty((n_steps + 1, n_grid), dtype=np.float64)
+        psi_history = np.empty(
+            (n_steps + 1, n_grid),
+            dtype=np.complex128,
+        )
+        prob_history = np.empty(
+            (n_steps + 1, n_grid),
+            dtype=np.float64,
+        )
 
         psi_history[0] = psi
         prob_history[0] = np.abs(psi) ** 2
 
         for step in range(n_steps):
             rhs = B @ psi
-            psi = lu_solve(A_lu, rhs)
+
+            try:
+                psi = A_lu.solve(rhs)
+            except Exception as exc:
+                raise SolverError(
+                    f"Crank–Nicolson sparse solve failed at step {step + 1}: {exc}"
+                ) from exc
+
             psi_history[step + 1] = psi
             prob_history[step + 1] = np.abs(psi) ** 2
 
