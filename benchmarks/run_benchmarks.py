@@ -31,7 +31,7 @@ SEED_A = 1
 SEED_B = 2
 
 
-def _decay(t: float, y: float) -> float:
+def _decay(_t: float, y: float) -> float:
     return -y
 
 
