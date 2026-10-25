@@ -24,6 +24,15 @@ def solve(grid, potential, levels=5, mass=1.0, hbar=1.0):
 
     energies, states = eigsh(H.matrix, k=levels, which="SA")
 
-    order = np.argsort(energies)
+    energies = np.asarray(energies)
+    states = np.asarray(states)
+
+    if energies.ndim != 1:
+        raise ValueError("Eigenenergies must be a one-dimensional array.")
+
+    if states.ndim != 2 or states.shape[1] != energies.size:
+        raise ValueError("Eigenstates must have one column per eigenenergy.")
+
+    order = np.argsort(energies, kind="stable")
 
     return (energies[order], states[:, order])
