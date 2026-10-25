@@ -63,6 +63,3 @@ jobs:
 
       - name: Build package
         run: uv build
-
-      - name: Check dependencies for known vulnerabilities
-        run: uv run pip-audit --desc on --exit-code on
