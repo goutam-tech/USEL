@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python3
 """Check that the version is consistent across the project.
 
@@ -44,9 +43,7 @@ def check(root: Path = ROOT) -> list[str]:
     versions = changelog_versions(root)
 
     if py_ver != pkg_ver:
-        problems.append(
-            f"pyproject.toml ({py_ver}) != usel.__version__ ({pkg_ver})"
-        )
+        problems.append(f"pyproject.toml ({py_ver}) != usel.__version__ ({pkg_ver})")
     else:
         if not versions:
             problems.append("CHANGELOG.md has no released version section")
