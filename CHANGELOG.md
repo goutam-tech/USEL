@@ -24,7 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ### Removed
 - None yet.
 
-## [1.1.0] - 2026-10-25
+## [1.1.1] - 2026-10-25
 
 ### Added
 - Version consistency checker and tests for project metadata,
