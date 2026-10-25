@@ -89,6 +89,25 @@ def test_crank_nicolson_conserves_norm():
     assert np.allclose(result.norm, 1.0, atol=1e-8)
 
 
+def test_crank_nicolson_preserves_probability_history_and_norm():
+    """Sparse propagation should preserve probability data and norm."""
+    solver = make_harmonic_solver(n=100)
+    eig = solver.eigenstates(n_states=1)
+    psi0 = eig.eigenstates[:, 0].astype(complex)
+
+    result = solver.solve_time_dependent(psi0, t_end=0.2, dt=0.01)
+
+    dx = solver.x[1] - solver.x[0]
+    expected_probability = np.abs(result.psi) ** 2
+    norms = np.sum(expected_probability, axis=1) * dx
+
+    assert result.psi.shape == (21, 100)
+    assert result.probability.shape == result.psi.shape
+    assert np.allclose(result.probability, expected_probability)
+    assert np.allclose(norms, 1.0, atol=1e-8)
+    assert np.allclose(result.t, np.linspace(0.0, 0.2, 21))
+
+
 def test_crank_nicolson_eigenstate_only_accumulates_phase():
     """Propagating an energy eigenstate should leave |psi| unchanged."""
     solver = make_harmonic_solver(n=200)

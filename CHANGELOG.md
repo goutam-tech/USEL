@@ -24,12 +24,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ### Removed
 - None yet.
 
+## [1.1.0] - 2026-10-25
+
+### Added
+- Version consistency checker and tests for project metadata,
+  package version, and changelog release sections.
+
+### Changed
+- Updated release version to 1.1.0.
+-------
 ## [1.0.9] - 2026-10-20
 
 ### Added
 - Initial public release of USEL v1.0.9.
-
----
+-------
 
 ## Version source
 
