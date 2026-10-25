@@ -5,6 +5,8 @@ All notable changes to USEL are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
 ## [1.1.2] - 2026-10-25
 
 ### Added
@@ -32,3 +34,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Updated the project version to 1.1.0.
 
 ## [1.0.9]
+
+### Added
+- Added the frontend page for the GitHub repository (#10).
+
+### Changed
+- Updated the HTML filename and project version.
+- Updated the GitHub star count in `index.html`.
+
+### Fixed
+- Fixed formatting issues.
+- Fixed deployment issues.
