@@ -2,6 +2,9 @@
 # Run the full quality gate used before tagging a release.
 set -euo pipefail
 
+echo "Checking version consistency..."
+python scripts/check_version.py
+
 echo "Running Ruff..."
 poetry run ruff check .
 

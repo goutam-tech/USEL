@@ -18,6 +18,9 @@ features, documentation improvements, and tests.
 3. Run the full quality gate: `./scripts/run_release_checks.sh`.
 4. Update documentation under `docs/` if you changed public behavior.
 5. Update `CHANGELOG.md` under an "Unreleased" heading.
+6. When releasing, bump the version in `pyproject.toml` and `src/usel/__init__.py`, move the
+   "Unreleased" entries under a new `## [x.y.z]` heading, and run
+   `python scripts/check_version.py`.
 
 ## Pull Request Guidelines
 
