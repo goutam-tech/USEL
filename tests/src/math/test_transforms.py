@@ -52,7 +52,7 @@ class TestTransforms:
 
         with pytest.raises(ValidationError):
             frequency_analysis(signal, sample_rate=10)
-    
+
     @staticmethod
     def test_fft_matches_analytical_dft():
         # The DFT of a delta [1, 0, 0, 0] is the all-ones vector.
