@@ -1,0 +1,114 @@
+{
+  "environment": {
+    "python": "3.14.3 (tags/v3.14.3:323c59a, Feb  3 2026, 16:04:56) [MSC v.1944 64 bit (AMD64)]",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "numpy": "2.5.2",
+    "scipy": "1.18.1"
+  },
+  "methodology": {
+    "integrator": "Crank-Nicolson",
+    "dense_solver": "scipy.linalg.lu_factor / lu_solve",
+    "sparse_solver": "scipy.sparse.linalg.splu",
+    "steps": 20,
+    "dt": 0.005,
+    "repeats": 5,
+    "grid_sizes": [
+      200,
+      400,
+      800
+    ],
+    "timing_statistic": "median",
+    "memory_measurement": "tracemalloc peak; Python-traced allocations only",
+    "matrix_storage_estimate": "Principal matrix and factor payloads; excludes Python object overhead and temporary allocations",
+    "normalization": "Discrete physical norm: sqrt(sum(abs(psi)**2) * dx)"
+  },
+  "results": [
+    {
+      "grid_size": 200,
+      "steps": 20,
+      "dt": 0.005,
+      "dense": {
+        "median_runtime_seconds": 0.1060789000002842,
+        "min_runtime_seconds": 0.07474519999959739,
+        "runtime_stdev_seconds": 0.05679625850249537,
+        "median_traced_peak_bytes": 2968766,
+        "median_matrix_payload_bytes": 2240000,
+        "repeats": 5
+      },
+      "sparse": {
+        "median_runtime_seconds": 0.0021466999996846425,
+        "min_runtime_seconds": 0.0020655999996961327,
+        "runtime_stdev_seconds": 0.0004364264144788457,
+        "median_traced_peak_bytes": 154005,
+        "median_matrix_payload_bytes": 51116,
+        "repeats": 5
+      },
+      "speedup_dense_over_sparse": 49.414869341718706,
+      "correctness": {
+        "final_states_allclose": true,
+        "max_absolute_state_difference": 8.98104391355218e-16,
+        "dense_final_norm": 0.9999999999999969,
+        "sparse_final_norm": 0.9999999999999969,
+        "norms_conserved": true
+      }
+    },
+    {
+      "grid_size": 400,
+      "steps": 20,
+      "dt": 0.005,
+      "dense": {
+        "median_runtime_seconds": 0.17390630000045348,
+        "min_runtime_seconds": 0.12964860000010958,
+        "runtime_stdev_seconds": 0.07737175953804083,
+        "median_traced_peak_bytes": 11690214,
+        "median_matrix_payload_bytes": 8960000,
+        "repeats": 5
+      },
+      "sparse": {
+        "median_runtime_seconds": 0.002587100000710052,
+        "min_runtime_seconds": 0.0024763999999777297,
+        "runtime_stdev_seconds": 0.00029301560873705256,
+        "median_traced_peak_bytes": 295967,
+        "median_matrix_payload_bytes": 102316,
+        "repeats": 5
+      },
+      "speedup_dense_over_sparse": 67.22055581644443,
+      "correctness": {
+        "final_states_allclose": true,
+        "max_absolute_state_difference": 1.322842388394171e-15,
+        "dense_final_norm": 1.0,
+        "sparse_final_norm": 1.0,
+        "norms_conserved": true
+      }
+    },
+    {
+      "grid_size": 800,
+      "steps": 20,
+      "dt": 0.005,
+      "dense": {
+        "median_runtime_seconds": 0.314044499999909,
+        "min_runtime_seconds": 0.07317020000027696,
+        "runtime_stdev_seconds": 0.15029727824497258,
+        "median_traced_peak_bytes": 46418214,
+        "median_matrix_payload_bytes": 35840000,
+        "repeats": 5
+      },
+      "sparse": {
+        "median_runtime_seconds": 0.003012799999851268,
+        "min_runtime_seconds": 0.002832900000612426,
+        "runtime_stdev_seconds": 0.0001031471425104673,
+        "median_traced_peak_bytes": 582103,
+        "median_matrix_payload_bytes": 204716,
+        "repeats": 5
+      },
+      "speedup_dense_over_sparse": 104.23675651069185,
+      "correctness": {
+        "final_states_allclose": true,
+        "max_absolute_state_difference": 3.731970409057305e-15,
+        "dense_final_norm": 1.0000000000000033,
+        "sparse_final_norm": 1.0000000000000036,
+        "norms_conserved": true
+      }
+    }
+  ]
+}
