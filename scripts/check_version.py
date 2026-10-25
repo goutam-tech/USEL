@@ -1,10 +1,8 @@
+
 #!/usr/bin/env python3
 """Check that the version is consistent across the project.
 
-Compares ``pyproject.toml``, ``src/usel/__init__.py`` and ``CHANGELOG.md``.
-Exits with status 1 and prints the problems if anything disagrees.
-
-Usage:  python scripts/check_version.py
+Compares pyproject.toml, src/usel/__init__.py and CHANGELOG.md.
 """
 
 from __future__ import annotations
@@ -43,10 +41,18 @@ def check(root: Path = ROOT) -> list[str]:
     problems: list[str] = []
     py_ver = pyproject_version(root)
     pkg_ver = package_version(root)
+    versions = changelog_versions(root)
+
     if py_ver != pkg_ver:
-        problems.append(f"pyproject.toml ({py_ver}) != usel.__version__ ({pkg_ver})")
-    if pkg_ver not in changelog_versions(root):
-        problems.append(f"CHANGELOG.md has no '## [{pkg_ver}]' section")
+        problems.append(
+            f"pyproject.toml ({py_ver}) != usel.__version__ ({pkg_ver})"
+        )
+    else:
+        if not versions:
+            problems.append("CHANGELOG.md has no released version section")
+        elif pkg_ver not in versions:
+            problems.append(f"CHANGELOG.md has no '## [{pkg_ver}]' section")
+
     return problems
 
 
@@ -56,10 +62,12 @@ def main() -> int:
     except (OSError, ValueError) as exc:
         print(f"[FAIL] {exc}")
         return 1
+
     if problems:
         for problem in problems:
             print(f"[FAIL] {problem}")
         return 1
+
     print(f"[OK] version {package_version()} is consistent")
     return 0
 
