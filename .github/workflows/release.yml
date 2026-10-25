@@ -1,4 +1,4 @@
-name: release
+name: USEL Release
 
 on:
   workflow_run:
@@ -11,163 +11,203 @@ permissions:
 
 env:
   PACKAGE_NAME: usel
-  OWNER: goutam-tech
-  TAP_NAME: USEL
 
 jobs:
   details:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    name: Validate release version
+    if: >-
+      ${{
+        github.event.workflow_run.conclusion == 'success' &&
+        github.event.workflow_run.head_branch == 'main'
+      }}
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
     outputs:
-      new_version: ${{ steps.release.outputs.new_version }}
-      suffix: ${{ steps.release.outputs.suffix }}
-      tag_name: ${{ steps.release.outputs.tag_name }}
+      version: ${{ steps.release.outputs.version }}
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout tested commit
+        uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.workflow_run.head_sha }}
           fetch-depth: 0
 
-      - uses: actions/setup-python@v5
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-      - id: release
-        name: Read release version
+      - name: Read and validate version
+        id: release
+        shell: bash
         run: |
           VERSION=$(python - <<'PY'
           import tomllib
-          with open("pyproject.toml", "rb") as f:
-              print(tomllib.load(f)["project"]["version"])
+
+          with open("pyproject.toml", "rb") as file:
+              print(tomllib.load(file)["project"]["version"])
           PY
           )
 
-          echo "Version: $VERSION"
+          if [ -z "$VERSION" ]; then
+            echo "Could not read project version."
+            exit 1
+          fi
 
-          echo "new_version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "tag_name=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "suffix=" >> "$GITHUB_OUTPUT"
+          echo "Release version: $VERSION"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
-          if git ls-remote --exit-code --tags origin "refs/tags/$VERSION" >/dev/null 2>&1; then
-            echo "Tag '$VERSION' already exists."
+          if git ls-remote --exit-code --tags origin \
+            "refs/tags/$VERSION" >/dev/null 2>&1; then
+            echo "Git tag $VERSION already exists."
             exit 1
           fi
 
   check_pypi:
+    name: Check PyPI version
     needs: details
     runs-on: ubuntu-latest
+
     steps:
-      - name: Check PyPI version
+      - name: Check whether version is published
         env:
-          VERSION: ${{ needs.details.outputs.new_version }}
+          VERSION: ${{ needs.details.outputs.version }}
+        shell: bash
         run: |
-          STATUS=$(curl -sS -o /dev/null -w "%{http_code}" \
+          STATUS=$(curl --silent --show-error \
+            --output /dev/null \
+            --write-out "%{http_code}" \
             "https://pypi.org/pypi/${PACKAGE_NAME}/${VERSION}/json")
 
           if [ "$STATUS" = "200" ]; then
             echo "Version $VERSION already exists on PyPI."
             exit 1
           elif [ "$STATUS" != "404" ]; then
-            echo "Could not verify PyPI version. HTTP status: $STATUS"
+            echo "PyPI check failed with HTTP status $STATUS."
             exit 1
           fi
 
-          echo "Version $VERSION is not yet published."
+          echo "Version $VERSION is available for publication."
 
-  setup_and_build:
+  build:
+    name: Build package
     needs: [details, check_pypi]
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+    steps:
+      - name: Checkout tested commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-      - name: Install Poetry
-        run: |
-          curl -sSL https://install.python-poetry.org | python3 -
-          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - name: Install uv
+        uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e
 
-      - name: Validate project
-        run: |
-          poetry --version
-          poetry check --lock
+      - name: Check lockfile
+        run: uv lock --check
 
       - name: Install dependencies
-        run: poetry sync --no-interaction
+        run: uv sync --locked --group dev
 
-      - name: Build package
-        run: poetry build
+      - name: Test version consistency
+        run: uv run pytest tests/src/utils/test_versioning.py -v
 
-      - name: Verify build artifacts
+      - name: Build distributions
+        run: uv build
+
+      - name: Verify distributions
+        shell: bash
         run: |
           test -n "$(find dist -maxdepth 1 -name '*.whl' -print -quit)"
           test -n "$(find dist -maxdepth 1 -name '*.tar.gz' -print -quit)"
           ls -lh dist/
 
-      - uses: actions/upload-artifact@v4
+      - name: Upload distributions
+        uses: actions/upload-artifact@v4
         with:
           name: dist
           path: dist/
           if-no-files-found: error
 
-  pypi_publish:
-    needs: [setup_and_build]
+  publish:
+    name: Publish to PyPI
+    needs: [details, build]
     runs-on: ubuntu-latest
+
     permissions:
       id-token: write
+
+    environment:
+      name: pypi
+      url: https://pypi.org/project/usel/
+
     steps:
-      - uses: actions/download-artifact@v4
+      - name: Download distributions
+        uses: actions/download-artifact@v4
         with:
           name: dist
           path: dist/
 
-      - name: Publish to PyPI
+      - name: Publish package
         uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086
 
   tag_release:
-    needs: [details, pypi_publish]
+    name: Create Git tag
+    needs: [details, publish]
     runs-on: ubuntu-latest
+
     permissions:
       contents: write
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout tested commit
+        uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.workflow_run.head_sha }}
           fetch-depth: 0
 
-      - name: Create and push Git tag
+      - name: Create and push tag
         env:
-          VERSION: ${{ needs.details.outputs.tag_name }}
+          VERSION: ${{ needs.details.outputs.version }}
+        shell: bash
         run: |
-          if git ls-remote --exit-code --tags origin "refs/tags/$VERSION" >/dev/null 2>&1; then
-            echo "Tag '$VERSION' already exists."
+          if git ls-remote --exit-code --tags origin \
+            "refs/tags/$VERSION" >/dev/null 2>&1; then
+            echo "Git tag $VERSION already exists."
             exit 1
           fi
 
           git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.email \
+            "41898282+github-actions[bot]@users.noreply.github.com"
 
           git tag -a "$VERSION" -m "Release $VERSION"
           git push origin "$VERSION"
 
   github_release:
-    needs: [details, pypi_publish, tag_release]
+    name: Create GitHub Release
+    needs: [details, tag_release]
     runs-on: ubuntu-latest
+
     permissions:
       contents: write
+
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/download-artifact@v4
-        with:
-          name: dist
-          path: dist/
-
-      - name: Create GitHub Release
+      - name: Create release
         env:
           GH_TOKEN: ${{ github.token }}
-          VERSION: ${{ needs.details.outputs.tag_name }}
+          VERSION: ${{ needs.details.outputs.version }}
         run: |
-          gh release create "$VERSION" dist/* \
+          gh release create "$VERSION" \
+            --repo "$GITHUB_REPOSITORY" \
+            --verify-tag \
             --title "$VERSION" \
             --generate-notes
