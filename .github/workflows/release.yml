@@ -5,8 +5,7 @@ on:
     branches: [main]
 
 permissions:
-  contents: write
-  id-token: write
+  contents: read
 
 env:
   PACKAGE_NAME: usel
@@ -29,16 +28,12 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install Poetry
-        run: |
-          curl -sSL https://install.python-poetry.org | python3 -
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
-
       - id: release
+        name: Read release version
         run: |
           VERSION=$(python - <<'PY'
           import tomllib
-          with open("pyproject.toml","rb") as f:
+          with open("pyproject.toml", "rb") as f:
               print(tomllib.load(f)["project"]["version"])
           PY
           )
@@ -54,46 +49,67 @@ jobs:
             exit 1
           fi
 
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          git tag -a "$VERSION" -m "Release $VERSION"
-          git push origin "$VERSION"
-
   check_pypi:
     needs: details
     runs-on: ubuntu-latest
     steps:
-      - run: |
-          response=$(curl -s https://pypi.org/pypi/${PACKAGE_NAME}/json || true)
-          latest=$(echo "$response" | jq -r 'if type=="object" and has("releases") then (.releases|keys_unsorted|last // "0.0.0") else "0.0.0" end')
-          echo "Latest=$latest"
-          if [ "$latest" = "${{ needs.details.outputs.new_version }}" ]; then
-            echo "Already released."
+      - name: Check PyPI version
+        env:
+          VERSION: ${{ needs.details.outputs.new_version }}
+        run: |
+          STATUS=$(curl -sS -o /dev/null -w "%{http_code}" \
+            "https://pypi.org/pypi/${PACKAGE_NAME}/${VERSION}/json")
+
+          if [ "$STATUS" = "200" ]; then
+            echo "Version $VERSION already exists on PyPI."
+            exit 1
+          elif [ "$STATUS" != "404" ]; then
+            echo "Could not verify PyPI version. HTTP status: $STATUS"
             exit 1
           fi
 
+          echo "Version $VERSION is not yet published."
+
   setup_and_build:
-    needs: [details,check_pypi]
+    needs: [details, check_pypi]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: |
+
+      - name: Install Poetry
+        run: |
           curl -sSL https://install.python-poetry.org | python3 -
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
-          poetry version ${{ needs.details.outputs.new_version }}
-          poetry install --sync --no-interaction
-          poetry build
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Validate project
+        run: |
+          poetry --version
+          poetry check --lock
+
+      - name: Install dependencies
+        run: poetry sync --no-interaction
+
+      - name: Build package
+        run: poetry build
+
+      - name: Verify build artifacts
+        run: |
+          test -n "$(find dist -maxdepth 1 -name '*.whl' -print -quit)"
+          test -n "$(find dist -maxdepth 1 -name '*.tar.gz' -print -quit)"
+          ls -lh dist/
+
       - uses: actions/upload-artifact@v4
         with:
           name: dist
           path: dist/
+          if-no-files-found: error
 
   pypi_publish:
-    needs: [setup_and_build,details]
+    needs: [setup_and_build]
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -102,20 +118,53 @@ jobs:
         with:
           name: dist
           path: dist/
-      - uses: pypa/gh-action-pypi-publish@release/v1
 
-  github_release:
-    needs: [setup_and_build,details]
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086
+
+  tag_release:
+    needs: [details, pypi_publish]
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create and push Git tag
+        env:
+          VERSION: ${{ needs.details.outputs.tag_name }}
+        run: |
+          if git ls-remote --exit-code --tags origin "refs/tags/$VERSION" >/dev/null 2>&1; then
+            echo "Tag '$VERSION' already exists."
+            exit 1
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git tag -a "$VERSION" -m "Release $VERSION"
+          git push origin "$VERSION"
+
+  github_release:
+    needs: [details, pypi_publish, tag_release]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
       - uses: actions/download-artifact@v4
         with:
           name: dist
           path: dist/
-      - env:
+
+      - name: Create GitHub Release
+        env:
           GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.details.outputs.tag_name }}
         run: |
-          gh release create "${{ needs.details.outputs.tag_name }}" dist/* --title "${{ needs.details.outputs.tag_name }}" --generate-notes
+          gh release create "$VERSION" dist/* \
+            --title "$VERSION" \
+            --generate-notes
