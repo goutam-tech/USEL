@@ -5,26 +5,29 @@ All notable changes to USEL are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+### Changed
+- CI test matrix now uses only declared Python versions (3.10, 3.11, 3.12, 3.13, 3.14, 3.15).
+
+## [1.1.2] - 2026-10-25
 
 ### Added
-- Numerical-correctness test baseline for core scientific methods
-  (`tests/src/math/`, `tests/src/solvers/`, `tests/src/linalg/`).
-- Reproducible CPU and memory benchmark suite (`benchmarks/bench_suite.py`).
-- Solver convergence diagnostics: `residual` field on
-  `SolverResult` for root-finding solvers.
-- Infinite-well analytical validation tests for the Schrödinger solver.
+- Added improvements to package version consistency validation.
 
 ### Changed
-- CI test matrix now uses only declared Python versions (3.11, 3.12).
+- Updated release workflow to run after the `USEL CI` workflow succeeds on the `main` branch.
+- Improved GitHub Actions security by pinning third-party actions to full commit SHAs.
 
 ### Fixed
-- None yet.
-
-### Removed
-- None yet.
+- Fixed inconsistencies between the package version and `pyproject.toml`.
+- Updated changelog validation to ensure the current release version has a corresponding section.
 
 ## [1.1.1] - 2026-10-25
+
+### Fixed
+- Synchronized the package version with `pyproject.toml`.
+- Improved package version consistency checks.
+
+## [1.1.0] - 2026-10-25
 
 ### Added
 - Version consistency checker and tests for project metadata,
