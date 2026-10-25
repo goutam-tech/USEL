@@ -5,21 +5,17 @@ All notable changes to USEL are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
-### Changed
-- CI test matrix now uses only declared Python versions (3.10, 3.11, 3.12, 3.13, 3.14, 3.15).
-
 ## [1.1.2] - 2026-10-25
 
 ### Added
 - Added improvements to package version consistency validation.
 
 ### Changed
-- Updated release workflow to run after the `USEL CI` workflow succeeds on the `main` branch.
-- Improved GitHub Actions security by pinning third-party actions to full commit SHAs.
+- Updated the release workflow to run after `USEL CI` succeeds on `main`.
+- Pinned third-party GitHub Actions to full commit SHAs.
 
 ### Fixed
-- Fixed inconsistencies between the package version and `pyproject.toml`.
-- Updated changelog validation to ensure the current release version has a corresponding section.
+- Fixed package version consistency between `pyproject.toml` and `usel.__version__`.
 
 ## [1.1.1] - 2026-10-25
 
@@ -30,50 +26,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ## [1.1.0] - 2026-10-25
 
 ### Added
-- Version consistency checker and tests for project metadata,
-  package version, and changelog release sections.
+- Added version consistency checks for project metadata, package version, and changelog sections.
 
 ### Changed
-- Updated release version to 1.1.0.
--------
-## [1.0.9] - 2026-10-20
+- Updated the project version to 1.1.0.
 
-### Added
-- Initial public release of USEL v1.0.9.
--------
-
-## Version source
-
-The authoritative version is declared in `pyproject.toml` under
-`[project] version`. All release artifacts, changelog entries, and
-documentation must reference this single source. Do not maintain a
-separate version number elsewhere.
-
-## Release procedure
-
-1. Update `pyproject.toml` with the new version (SemVer).
-2. Add a changelog entry under a new version section, using the
-   `Added` / `Changed` / `Fixed` / `Removed` categories. Only document
-   changes that are implemented and tested — never advertise planned
-   features as available.
-3. Run the full test suite (`uv run pytest`) and lint/format checks
-   (`uv run ruff check .`, `uv run ruff format --check .`).
-4. Build release artifacts (`uv build`) and inspect `dist/` to confirm
-   expected files and metadata are present.
-5. Tag the commit with the version number (`git tag -a v1.0.9 -m "..."`)
-   and push the tag. The release workflow is triggered by the tag push,
-   not by ordinary pull requests. Publishing is never automatic.
-
-## Version consistency
-
-Package metadata version (`pyproject.toml`) must match the git tag and
-changelog header. Before releasing, verify:
-
-```bash
-# Check the declared version
-python -c "import tomllib; print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])"
-
-# Build and inspect artifacts
-uv build
-ls dist/
-```
+## [1.0.9]
